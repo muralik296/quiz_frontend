@@ -16,7 +16,7 @@ function App() {
         <NavBar />
         <Routes>
 
-          <Route path='/register' element={
+          <Route path='/' element={
             <>
               <div className="row">
                 <div className='col-md-12'>

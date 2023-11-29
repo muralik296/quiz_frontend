@@ -1,6 +1,6 @@
 function ManageQuiz(){
     return (<h1>
-        Hello world
+        Manage Quiz.. Under maintenance
     </h1>)
 }
 export default ManageQuiz;

@@ -1,11 +1,37 @@
 import { useState } from "react";
-import { Card, Row, Col, NavLink } from "react-bootstrap";
+import { Card, Row, Col, NavLink, Button } from "react-bootstrap";
 import CreateQuiz from "./CreateQuiz";
 import ManageQuiz from "./ManageQuiz";
+import axios from "axios";
 
 function TeacherView(props) {
 
     const [quiz, setQuiz] = useState(null)
+
+    async function handleDelete(data) {
+        console.log('here in the delete');
+        console.log('here data', data);
+        const { courses_info, teacher_info } = data;
+        const { course_id } = courses_info[0];
+
+        const { student_id } = teacher_info;
+        console.log(student_id)
+        const end_point = `http://127.0.0.1:8000/quiz/delete/${course_id}/`
+
+        try {
+            const response = await axios.delete(end_point,
+                {
+                    data: {
+                        course_id,
+                        teacher_id: student_id
+                    }
+                })
+            console.log(response);
+
+        } catch (err) {
+            console.log(err);
+        }
+    }
 
     function handleCourseClickTeacher(clickedCourse) {
         console.log(clickedCourse)
@@ -28,22 +54,26 @@ function TeacherView(props) {
                 is_edit: false
             })
         }
-
     }
 
     const { data } = props;
     console.log(data, '=from props')
     const { courses_info } = data;
 
+    console.log(courses_info, '= courses info');
+
     if (quiz) {
-        // if quiz is true and editing quiz is false, render create quiz component
+
         if (!quiz.is_edit) {
-            // if is_edit is false
-            return (<CreateQuiz quiz={quiz} />)
+            return (<CreateQuiz data={data} />)
         }
         if (quiz.is_edit) {
             // is is_edit is true
-            return (<ManageQuiz quiz={quiz} />)
+            return (
+                <>
+                    <ManageQuiz data={data} />
+                </>
+            )
         }
     }
 
@@ -61,7 +91,8 @@ function TeacherView(props) {
                                 <button className="btn btn-outline-secondary" onClick={() => handleQuiz(eachCourse)}>
                                     {(eachCourse.quizzes_info.length > 0) ? 'Manage Quiz' : 'Create Quiz'}
                                 </button>
-                                {(eachCourse.quizzes_info.length > 0) ? <button className="btn btn-alert">Delete Quiz</button> : null}
+                                {(eachCourse.quizzes_info.length > 0) ? <Button variant="secondary" onClick={() => handleDelete(data)}>Delete Quiz</Button>
+                                    : null}
                             </Card.Subtitle>
                         </Card.Body>
                     </Card>

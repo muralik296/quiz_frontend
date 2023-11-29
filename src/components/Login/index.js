@@ -31,7 +31,7 @@ const LoginComponent = () => {
                     },
                 }
             );
-
+            console.log(response.data,'=info from the login component')
             setData(response.data);
         } catch (error) {
             setError(error);
