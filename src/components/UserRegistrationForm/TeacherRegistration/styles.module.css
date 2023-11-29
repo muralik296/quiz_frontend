@@ -1,0 +1,7 @@
+.input_group input{
+    border-radius: 10px;
+}
+
+.input_group{
+    display: inline-block;
+}
