@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import QuizTimer from '../QuizTimer';
+// import QuizTimer from '../QuizTimer';
 import { Form, Button, Container, Row, Col } from 'react-bootstrap';
 // function calculateRemainingTime(startTime, duration) {
 //     // Parse start time

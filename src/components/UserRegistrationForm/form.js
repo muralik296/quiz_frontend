@@ -59,55 +59,52 @@ function UserRegistration() {
         <>Submitting your responses..</>
     )
 
+
     return (
         <>
-
-            <div className={`${styles.center_div}`}>
-
-                <div className="w-50">
-                    <div>
-                        <strong>User Registration Form</strong>
+            <div className={styles.center_div}>
+                <div className={`w-50 ${styles.form_container}`}>
+                    <div className={styles.form_title}>
+                        <strong>Registration Form</strong>
                     </div>
-                    <div>
-                        <label htmlFor="name" className="form-label">Name</label>
-                        <input onChange={handleRequestBodyChange} type="text" name="name" className="form-control form-control-sm" placeholder="For ex. John Doe" required />
+                    <div className={styles.form_group}>
+                        <label htmlFor="name" className={styles.form_label}>Name</label>
+                        <input onChange={handleRequestBodyChange} type="text" name="name" className={`form-control form-control-sm ${styles.form_input}`} placeholder="For ex. John Doe" required />
                     </div>
 
-                    <div>
-                        <label htmlFor="email" className="form-label">Email address</label>
-                        <input onChange={handleRequestBodyChange} type="email" name="email_id" className="form-control form-control-sm" placeholder="For example: mburrannagar@binghamton.edu" required />
+                    <div className={styles.form_group}>
+                        <label htmlFor="email" className={styles.form_label}>Email address</label>
+                        <input onChange={handleRequestBodyChange} type="email" name="email_id" className={`form-control form-control-sm ${styles.form_input}`} placeholder="For example: mburrannagar@binghamton.edu" required />
                     </div>
 
-                    <div>
-                        <label htmlFor="password" className="form-label">Password</label>
-                        <input onChange={handleRequestBodyChange} type="password" name="password" className="form-control form-control-sm" required />
+                    <div className={styles.form_group}>
+                        <label htmlFor="password" className={styles.form_label}>Password</label>
+                        <input onChange={handleRequestBodyChange} type="password" name="password" className={`form-control form-control-sm ${styles.form_input}`} required />
                     </div>
 
-
-                    <div>
-                        <div>
+                    <div className={styles.form_group}>
+                        <div className={styles.radio_group}>
                             <label>Are you a <strong>Student</strong> or <strong>Teacher</strong>?</label>
-
-                        </div>
-                        <div className="form-check form-check-inline">
-                            <input onChange={handleRadioChange} className="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" value="Student" required defaultChecked />
-                            <label className="form-check-label" htmlFor="inlineRadio1">Student</label>
-                        </div>
-                        <div className="form-check form-check-inline">
-                            <input onChange={handleRadioChange} className="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2" value="Teacher" required />
-                            <label className="form-check-label" htmlFor="inlineRadio2">Teacher</label>
+                            <div className={`form-check form-check-inline ${styles.radio_item}`}>
+                                <input onChange={handleRadioChange} className="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" value="Student" required defaultChecked />
+                                <label className={`form-check-label ${styles.radio_label}`} htmlFor="inlineRadio1">Student</label>
+                            </div>
+                            <div className={`form-check form-check-inline ${styles.radio_item}`}>
+                                <input onChange={handleRadioChange} className="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2" value="Teacher" required />
+                                <label className={`form-check-label ${styles.radio_label}`} htmlFor="inlineRadio2">Teacher</label>
+                            </div>
                         </div>
                     </div>
+
                     {is_teacher ? <TeacherRegistrationForm setRequestBody={setRequestBody} requestBody={requestBody} /> : <StudentRegistrationForm setRequestBody={setRequestBody} requestBody={requestBody} />}
-                    <div>
-                        <button className="btn btn-outline-primary" type="submit" onClick={handleSubmission}>Submit</button>
+
+                    <div className={styles.submit_button}>
+                        <button className={`btn btn-outline-primary ${styles.submit_button}`} type="submit" onClick={handleSubmission}>Submit</button>
                     </div>
                 </div>
-
             </div>
-
         </>
-    )
+    );
 }
 
 export default UserRegistration;

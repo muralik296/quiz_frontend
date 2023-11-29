@@ -1,4 +1,4 @@
-.center_div {
+/* .center_div {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -7,4 +7,58 @@
 
 .center_div div{
     margin: 10px;
+} */
+
+/* form.module.css */
+.center_div {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.w-50 {
+    background-color: #ffffff; /* Set your desired background color */
+    border-radius: 10px; /* Set your desired border radius */
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Optional: Add a box shadow */
+}
+
+.form_title {
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+}
+
+.form_group {
+    margin-bottom: 15px;
+}
+
+.form_label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.form_input {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+.radio_group {
+    margin-bottom: 15px;
+}
+
+.radio_item {
+    margin-right: 15px;
+}
+
+.radio_label {
+    margin-left: 5px;
+}
+
+.submit_button {
+    margin-top: 15px;
 }
