@@ -13,7 +13,6 @@ const LoginComponent = () => {
 
     const [data, setData] = useState(null)
     const [err, setError] = useState(null)
-    // const [loading, setLoading] = useState(null)
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -31,7 +30,7 @@ const LoginComponent = () => {
                     },
                 }
             );
-            console.log(response.data,'=info from the login component')
+            console.log(response.data, '=info from the login component')
             setData(response.data);
         } catch (error) {
             setError(error);
@@ -50,51 +49,53 @@ const LoginComponent = () => {
         return <StudentView data={data} />
     }
 
-    return (< Container >
-        <Form>
-            <Form.Group controlId="formEmail">
-                <Form.Label>Email address</Form.Label>
-                <Form.Control
-                    type="email"
-                    placeholder="Enter email"
-                    name="email_id"
-                    value={formData.email_id}
-                    onChange={handleInputChange}
-                />
-            </Form.Group>
+    return (
+        <Container>
+            <Form className="mt-5">
+                <Form.Group controlId="formEmail">
+                    <Form.Label>Email address</Form.Label>
+                    <Form.Control
+                        type="email"
+                        placeholder="Enter email"
+                        name="email_id"
+                        value={formData.email_id}
+                        onChange={handleInputChange}
+                    />
+                </Form.Group>
 
-            <Form.Group controlId="formPassword">
-                <Form.Label>Password</Form.Label>
-                <Form.Control
-                    type="password"
-                    placeholder="Password"
-                    name="password"
-                    value={formData.password}
-                    onChange={handleInputChange}
-                />
-            </Form.Group>
+                <Form.Group controlId="formPassword">
+                    <Form.Label>Password</Form.Label>
+                    <Form.Control
+                        type="password"
+                        placeholder="Password"
+                        name="password"
+                        value={formData.password}
+                        onChange={handleInputChange}
+                    />
+                </Form.Group>
 
-            <Form.Group controlId="formIsTeacher">
-                <Form.Check
-                    type="checkbox"
-                    label="I am a teacher"
-                    name="is_teacher"
-                    checked={formData.is_teacher}
-                    onChange={(e) =>
-                        setFormData({ ...formData, is_teacher: e.target.checked })
-                    }
-                />
-            </Form.Group>
+                <Form.Group controlId="formIsTeacher" className="mb-3">
+                    <Form.Check
+                        type="checkbox"
+                        label="I am a teacher"
+                        name="is_teacher"
+                        checked={formData.is_teacher}
+                        onChange={(e) =>
+                            setFormData({ ...formData, is_teacher: e.target.checked })
+                        }
+                    />
+                </Form.Group>
 
-            <Button variant="primary" onClick={handleLogin}>
-                Login
-            </Button>
-            <br />
-            {err ? <div className='alert alert-danger'> {err?.response?.data?.error}</div> : null}
-        </Form>
-    </Container >
-    )
+                <Button variant="primary" onClick={handleLogin}>
+                    Login
+                </Button>
 
+                <div className="mt-3">
+                    {err ? <div className='alert alert-danger'>{err?.response?.data?.error}</div> : null}
+                </div>
+            </Form>
+        </Container>
+    );
 };
 
 export default LoginComponent;
