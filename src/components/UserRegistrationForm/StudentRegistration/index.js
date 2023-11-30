@@ -14,8 +14,8 @@ function StudentRegistrationForm(props) {
         const fetchData = async () => {
             try {
                 setIsLoading(true);
-                const response = await axios.get('http://localhost:8000/quiz/courses/');
-                console.log(response.data);
+                const response = await axios.get(`http://${process.env.REACT_APP_SERVER_HOST}:${process.env.REACT_APP_SERVER_PORT}/quiz/courses/`);
+                console.log(response.data,'= response');
                 setData(response.data)
             } catch (err) {
                 console.log(err, '= error')

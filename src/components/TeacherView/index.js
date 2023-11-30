@@ -139,7 +139,7 @@ function TeacherView(props) {
       // changing the original data so that it renders with updated dataset
       handleData(data);
 
-      console.log(data,' = after update');
+      console.log(data, ' = after update');
 
     } catch (err) {
       console.error(err);
@@ -170,7 +170,7 @@ function TeacherView(props) {
 
   if (quiz) {
     if (!quiz.is_edit) {
-      return <CreateQuiz data={data} quiz={quiz}/>;
+      return <CreateQuiz data={data} quiz={quiz} />;
     }
     if (quiz.is_edit) {
       return <ManageQuiz data={data} quiz={quiz} />;
@@ -178,38 +178,41 @@ function TeacherView(props) {
   }
 
   return (
-    <Row className="mt-3">
-      {courses_info.map((eachCourse, index) => (
-        <Col key={index} md={4} className="mb-3">
-          <Card onClick={() => handleCourseClickTeacher(eachCourse)} style={{ margin: '15px' }}>
-            <Card.Body>
-              <Card.Title>{eachCourse.course_name}</Card.Title>
-              <Card.Subtitle className="mb-2 text-muted">
-                Course Code: {eachCourse.course_code}
-              </Card.Subtitle>
-              <Card.Subtitle>
-                <Button
-                  variant="outline-secondary"
-                  onClick={() => handleQuiz(eachCourse)}
-                >
-                  {eachCourse.quizzes_info.length > 0
-                    ? 'Manage Quiz'
-                    : 'Create Quiz'}
-                </Button>
-                {eachCourse.quizzes_info.length > 0 ? (
+    <div className='container-fluid'>
+
+      <Row className="mt-3">
+        {courses_info.map((eachCourse, index) => (
+          <Col key={index} md={4} className="mb-3">
+            <Card onClick={() => handleCourseClickTeacher(eachCourse)} style={{ margin: '15px' }}>
+              <Card.Body>
+                <Card.Title>{eachCourse.course_name}</Card.Title>
+                <Card.Subtitle className="mb-2 text-muted">
+                  Course Code: {eachCourse.course_code}
+                </Card.Subtitle>
+                <Card.Subtitle>
                   <Button
-                    variant="secondary"
-                    onClick={() => handleDelete(data)}
+                    variant="outline-secondary"
+                    onClick={() => handleQuiz(eachCourse)}
                   >
-                    Delete Quiz
+                    {eachCourse.quizzes_info.length > 0
+                      ? 'Manage Quiz'
+                      : 'Create Quiz'}
                   </Button>
-                ) : null}
-              </Card.Subtitle>
-            </Card.Body>
-          </Card>
-        </Col>
-      ))}
-    </Row>
+                  {eachCourse.quizzes_info.length > 0 ? (
+                    <Button
+                      variant="secondary"
+                      onClick={() => handleDelete(data)}
+                    >
+                      Delete Quiz
+                    </Button>
+                  ) : null}
+                </Card.Subtitle>
+              </Card.Body>
+            </Card>
+          </Col>
+        ))}
+      </Row>
+    </div>
   );
 }
 

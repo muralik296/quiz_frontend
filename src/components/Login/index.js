@@ -33,7 +33,7 @@ const LoginComponent = () => {
     const handleLogin = async () => {
         try {
             const response = await axios.post(
-                'http://127.0.0.1:8000/quiz/login/',
+                `http://${process.env.REACT_APP_SERVER_HOST}:${process.env.REACT_APP_SERVER_PORT}/quiz/login/`,
                 formData,
                 {
                     headers: {

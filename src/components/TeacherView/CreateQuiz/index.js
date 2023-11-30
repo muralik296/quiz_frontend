@@ -105,7 +105,7 @@ const CreateQuiz = (props) => {
 
         try {
             const response = await axios.post(
-                'http://127.0.0.1:8000/quiz/teacher/create/',
+                `http://${process.env.REACT_APP_SERVER_HOST}:${process.env.REACT_APP_SERVER_PORT}/quiz/teacher/create/`,
                 quizData,
                 {
                     headers: {

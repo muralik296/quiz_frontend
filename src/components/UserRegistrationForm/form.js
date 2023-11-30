@@ -5,24 +5,29 @@ import styles from './form.module.css';
 import TeacherRegistrationForm from "./TeacherRegistration";
 import StudentRegistrationForm from "./StudentRegistration";
 import { NavLink } from 'react-router-dom';
-
+import AppRegistrationIcon from '@mui/icons-material/AppRegistration';
 
 function UserRegistration() {
-    const [isRegistrationLoading, setRegistrationLoading] = useState(false);
     const [data, setData] = useState(null);
     const [is_teacher, setUser] = useState(false);
     const [requestBody, setRequestBody] = useState({ is_teacher: false });
+    const [isError, setError] = useState(false)
+
 
     const handleRadioChange = (event) => {
-        setUser(event.target.value === 'Teacher');
+        setUser((prev) => !prev);
+        const { value } = event.target;
+
         setRequestBody((prev) => ({
             ...prev,
-            is_teacher: event.target.value === 'Teacher',
+            ["is_teacher"]: value == 'Teacher' ? true : false,
         }));
     };
 
     const handleRequestBodyChange = (event) => {
         const { name, value } = event.target;
+        console.log(name, '=name');
+        console.log(value, '=value')
         setRequestBody((prev) => ({
             ...prev,
             [name]: value,
@@ -31,19 +36,24 @@ function UserRegistration() {
 
     const handleSubmission = async (event) => {
         event.preventDefault();
-        setRegistrationLoading(true);
 
         try {
             const response = await axios.post(
-                'http://localhost:8000/quiz/registration/',
+                `http://${process.env.REACT_APP_SERVER_HOST}:${process.env.REACT_APP_SERVER_PORT}/quiz/registration/`,
                 requestBody
             );
             console.log(response);
             setData(response);
+            // to do: 
+
+            setRequestBody({ email_id: '', password: '', is_teacher: false, name: '' });
+            console.log(requestBody, '= new request body');
+            setTimeout(() => {
+                setData(null);
+            }, 2000)
         } catch (error) {
             console.error('Error submitting form:', error);
-        } finally {
-            setRegistrationLoading(false);
+            setError(error);
         }
     };
 
@@ -54,8 +64,10 @@ function UserRegistration() {
                 <Grid container justifyContent="center">
                     <Grid item xs={12} md={8} lg={6}>
                         <Paper elevation={3} className={styles.form_container}>
+                            {data ? (<div className='alert alert-success'>Successfully Registred!</div>) : null}
+                            {isError ? <div className='alert alert-danger'>{isError?.response?.data?.error}</div> : null}
                             <form>
-                                <h3 className={styles.form_title}>Registration Form</h3>
+                                <h3 className={styles.form_title}>Register with us! <AppRegistrationIcon /></h3>
                                 <TextField
                                     fullWidth
                                     label="Name"
@@ -66,6 +78,7 @@ function UserRegistration() {
                                     required
                                     className={styles.form_input}
                                     autoComplete="off"
+                                    value={requestBody.name}
                                 />
 
                                 <TextField
@@ -79,6 +92,7 @@ function UserRegistration() {
                                     required
                                     className={styles.form_input}
                                     autoComplete="off"
+                                    value={requestBody.email_id}
                                 />
 
                                 <TextField
@@ -91,6 +105,7 @@ function UserRegistration() {
                                     required
                                     className={styles.form_input}
                                     autoComplete="off"
+                                    value={requestBody.password}
                                 />
 
                                 <RadioGroup
@@ -138,11 +153,10 @@ function UserRegistration() {
                                         Submit
                                     </Button>
                                 </div>
-                                <div style={{ textAlign: 'center',margin: '10px' }}>
-                                    <NavLink to="/login">Already Registerd? Login Here</NavLink>
+                                <div className={styles.login_link} style={{ textAlign: 'center', margin: '10px' }}>
+                                    <NavLink to="/login">Existing User? Login Here</NavLink>
                                 </div>
                             </form>
-
                         </Paper>
                     </Grid>
                 </Grid>
