@@ -70,7 +70,7 @@ function ShowQuiz(props) {
             const requestBody = { answers: answers.flat() };
             console.log(requestBody, '= final request to send');
             // make call to backend for sending q/a to api
-            const endpoint = `http://${process.env.REACT_APP_HOST}:${process.env.REACT_APP_PORT}/quiz/student/${course_id}/${student_id}/answers/`
+            const endpoint = `http://${process.env.REACT_APP_SERVER_HOST}:${process.env.REACT_APP_SERVER_PORT}/quiz/student/${course_id}/${student_id}/answers/`
 
             const res = await axios.post(endpoint, requestBody);
 

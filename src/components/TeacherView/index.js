@@ -113,6 +113,7 @@ import CreateQuiz from './CreateQuiz';
 import ManageQuiz from './ManageQuiz';
 import axios from 'axios';
 import Header from '../Header';
+import ClassStatistics from './Stats';
 
 function TeacherView(props) {
 
@@ -122,6 +123,20 @@ function TeacherView(props) {
   const { courses_info, teacher_info } = data;
 
   const { teacher_id, name, email_id } = teacher_info;
+
+  const [isStats, setIsStats] = useState(false);
+
+  function handleStats(data) {
+    const { courses_info, teacher_info } = data;
+    const { course_id } = courses_info[0];
+
+    setIsStats({
+      isStats: true,
+      course_id
+    })
+
+  }
+
 
   async function handleDelete(data) {
     const { courses_info, teacher_info } = data;
@@ -172,11 +187,19 @@ function TeacherView(props) {
     }
   }
 
+
+  if (isStats?.isStats) {
+    return (
+      <ClassStatistics course_id={isStats?.course_id} />
+    )
+  }
+
   if (quiz) {
     if (!quiz.is_edit) {
       return <CreateQuiz data={data} quiz={quiz} />;
     }
     if (quiz.is_edit) {
+
       return <ManageQuiz data={data} quiz={quiz} />;
     }
   }
@@ -203,6 +226,7 @@ function TeacherView(props) {
                       ? 'Manage Quiz'
                       : 'Create Quiz'}
                   </Button>
+
                   {eachCourse.quizzes_info.length > 0 ? (
                     <Button
                       variant="secondary"
@@ -211,6 +235,16 @@ function TeacherView(props) {
                       Delete Quiz
                     </Button>
                   ) : null}
+
+                  {eachCourse.quizzes_info.length > 0 ? (
+                    <Button
+                      variant="primary"
+                      onClick={() => handleStats(data)}
+                    >
+                      View Stats
+                    </Button>
+                  ) : null}
+
                 </Card.Subtitle>
               </Card.Body>
             </Card>
