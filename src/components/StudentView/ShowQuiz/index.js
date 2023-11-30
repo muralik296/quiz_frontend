@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Form, Button, Container, Row, Col } from 'react-bootstrap';
 import axios from 'axios';
 import QuizSubmit from '../SuccessQuizSubmit';
+import QuizTimer from '../QuizTimer/index';
 
 function ShowQuiz(props) {
     const { quizData, student_id } = props;
@@ -111,6 +112,7 @@ function ShowQuiz(props) {
     return (
         <>
             <h4 className="mt-4 mb-4">Quiz for {course_name}</h4>
+            <QuizTimer startTime={`${start_date} ${start_time}`} duration={duration} />
             <Container>
                 {(finalSubmission?.flag == false) ? <div className='alert alert-danger'>
                     Error Occured while trying to submit your responses

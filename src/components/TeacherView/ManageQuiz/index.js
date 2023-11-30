@@ -3,28 +3,40 @@ import { Form, Button, Container, Card } from 'react-bootstrap';
 import axios from 'axios';
 
 const ManageQuiz = (props) => {
-    console.log(props, '= props');
-    const { data } = props;
-    const { teacher_info, courses_info, quizzes_info } = data;
-    console.log(teacher_info, courses_info);
-    console.log(quizzes_info, '= quiz info');
-    const { student_id } = teacher_info;
-    const { course_id } = courses_info[0];
-    const { quiz_content, start_time, start_date, duration } = quizzes_info[0];
-    console.log(quiz_content, start_time, start_date, duration, '= i need theses')
+    const { data, quiz } = props;
+    const { course } = quiz;
+    const { course_code, course_id, course_name, quizzes_info } = course;
+    const { teacher_info, courses_info } = data;
 
+    const { teacher_id } = teacher_info;
+
+    const { start_time, start_date, duration } = quizzes_info[0];
     const [questions, setQuestions] = useState([]);
     const [error, setError] = useState(null);
     const [finalData, setFinalData] = useState(null);
+    const [startDate, setStartDate] = useState(start_date);
+    const [startTime, setStartTime] = useState(start_time);
+    const [dur, setDuration] = useState(duration);
 
-    useEffect(async () => {
 
-        const end_point = `http://127.0.0.1:8000/quiz/student/${course_id}/questions/`;
+    useEffect(() => {
+        // Make API call to get quiz details and set the questions state
+        const fetchQuizDetails = async () => {
+            try {
+                const end_point = `http://localhost:8000/quiz/student/${course_id}/questions/`;
 
-        const response = await axios.get(end_point)
+                const response = await axios.get(end_point);
+                console.log(response.data, '= response');
+                const { questions } = response.data;
+                console.log(questions, '= questions');
+                setQuestions(questions);
+            } catch (error) {
+                setError(error);
+            }
+        };
+        fetchQuizDetails();
+    }, []);
 
-        setQuestions(response.data);
-    }, [quiz_content]);
 
     const renderCorrectAnswerField = (questionIndex, numberOfChoices, questionType) => {
         if (questionType === 'multipleChoice') {
@@ -37,10 +49,21 @@ const ManageQuiz = (props) => {
                     ))}
                 </Form.Control>
             );
-        } else if (questionType === 'multipleAnswer') {
-            return <Form.Control type="text" placeholder={`Enter correct answer`} name={`correctAnswer${questionIndex + 1}`} required />;
+        } else {
+            return (
+                <>
+                    {[...Array(Number(numberOfChoices))].map((_, index) => (
+                        <Form.Check
+                            key={index}
+                            type="checkbox"
+                            label={`Option ${index + 1}`}
+                            name={`correctAnswer${questionIndex + 1}`}
+                            value={`option${questionIndex + 1}_${index + 1}`}
+                        />
+                    ))}
+                </>
+            );
         }
-
         return null;
     };
 
@@ -131,8 +154,18 @@ const ManageQuiz = (props) => {
             const question = e.target[`question${i + 1}`]?.value || '';
             const options = Array.from({ length: numberOfChoices }, (_, j) => e.target[`option${i + 1}_${j + 1}`]?.value || '');
             let correctAnswer = e.target[`correctAnswer${i + 1}`]?.value || '';
+            if (type === 'multipleChoice') {
+                correctAnswer = correctAnswer.split("_")[1];
+                const answer = options[Number(correctAnswer) - 1];
 
-            if (type === 'multipleAnswer') {
+                updatedQuizContent.push({
+                    question,
+                    options,
+                    correct_answer: answer,
+                    type,
+                });
+            }
+            else {
                 correctAnswer = correctAnswer.split(',').map(Number);
                 const answer = [];
                 for (let j = 0; j < correctAnswer.length; j++) {
@@ -147,33 +180,20 @@ const ManageQuiz = (props) => {
                     type,
                 });
             }
-
-            if (type === 'multipleChoice') {
-                correctAnswer = correctAnswer.split("_")[1];
-                const answer = options[Number(correctAnswer) - 1];
-
-                updatedQuizContent.push({
-                    question,
-                    options,
-                    correct_answer: answer,
-                    type,
-                });
-            }
         }
 
         const updatedQuizData = {
-            teacher_id: student_id,
+            teacher_id,
             course_id,
-
             quiz_content: updatedQuizContent,
             start_time,
             start_date,
-            duration,
+            dur,
         };
 
         try {
             const response = await axios.put(
-                'http://127.0.0.1:8000/quiz/teacher/edit/',
+                `http://127.0.0.1:8000/quiz/update/${course_id}/${teacher_id}/`,
                 updatedQuizData,
                 {
                     headers: {
@@ -188,6 +208,11 @@ const ManageQuiz = (props) => {
             console.log(err, '=err');
         }
     };
+
+
+    if (questions.length == 0) {
+        return (<h4>Loading..</h4>)
+    }
 
     if (error) {
         return (
@@ -208,7 +233,18 @@ const ManageQuiz = (props) => {
     return (
         <Container>
             <Form onSubmit={handleQuizSubmit}>
-                {/* ... (rest of the form controls) */}
+                <Form.Group controlId="startDate">
+                    <Form.Label>Start Date:</Form.Label>
+                    <Form.Control type="date" defaultValue={startDate} onChange={(e) => setStartDate(e.target.value)} required />
+                </Form.Group>
+                <Form.Group controlId="startTime">
+                    <Form.Label>Start Time:</Form.Label>
+                    <Form.Control type="time" defaultValue={startTime} onChange={(e) => setStartTime(e.target.value)} required />
+                </Form.Group>
+                <Form.Group controlId="duration">
+                    <Form.Label>Duration (in minutes):</Form.Label>
+                    <Form.Control type="number" min="1" defaultValue={dur} onChange={(e) => setDuration(e.target.value)} required />
+                </Form.Group>
                 {renderQuestionForm()}
                 <Button variant="primary" type="submit">
                     Edit Quiz
