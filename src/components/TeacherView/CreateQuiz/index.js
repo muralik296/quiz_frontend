@@ -72,7 +72,8 @@ const CreateQuiz = (props) => {
                 quiz_content.push({
                     question,
                     options,
-                    correct_answer: answer
+                    correct_answer: answer,
+                    type
                 })
             }
             if (type == 'multipleChoice') {
@@ -84,7 +85,8 @@ const CreateQuiz = (props) => {
                 quiz_content.push({
                     question,
                     options,
-                    correct_answer: answer
+                    correct_answer: answer,
+                    type
                 })
             }
 

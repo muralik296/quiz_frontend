@@ -50,7 +50,7 @@ const StudentView = (props) => {
     };
 
     if (quizData) {
-        return <ShowQuiz quizData={quizData} />
+        return <ShowQuiz quizData={quizData} student_id={student_id}/>
     }
 
     return (
