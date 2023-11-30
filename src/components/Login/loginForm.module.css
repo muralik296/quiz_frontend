@@ -1,0 +1,36 @@
+/* loginForm.module.css */
+
+.login_form_container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+}
+
+.login_form_paper {
+    padding: 2rem;
+    width: 100%;
+    max-width: 400px;
+}
+
+.login_form_title {
+    margin: 1rem 0;
+}
+
+.login_form_input {
+    margin-bottom: 1rem;
+}
+
+.login_form_checkbox {
+    margin-bottom: 1rem;
+}
+
+.login_form_submit_button {
+    margin-top: 1rem;
+}
+
+.login_form_error {
+    color: red;
+    margin-top: 1rem;
+}

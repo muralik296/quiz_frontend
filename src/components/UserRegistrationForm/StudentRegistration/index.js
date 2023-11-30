@@ -8,7 +8,7 @@ function StudentRegistrationForm(props) {
     const [isLoading, setIsLoading] = useState(false);
     const [data, setData] = useState(null);
     const [error, setError] = useState(false)
-
+    
 
     useEffect(() => {
         const fetchData = async () => {
@@ -85,8 +85,8 @@ function StudentRegistrationForm(props) {
                 console.log(e, '=element');
                 return (
                     <div key={index}>
-                        <input type="checkbox" name={e.teachers__teacher_id} value={e.course_code} onChange={handleSubjects} />
-                        <label htmlFor={e.course_name}> {e.course_code} - {e.course_name} - {e.teachers__name}</label>
+                        <input autoComplete="off" type="checkbox" name={e.teachers__teacher_id} value={e.course_code} onChange={handleSubjects} />
+                        <label htmlFor={e.course_name}> {`${e.course_code} - ${e.course_name} - ${e.teachers__name}`.toUpperCase()}</label>
                     </div>
                 );
             })

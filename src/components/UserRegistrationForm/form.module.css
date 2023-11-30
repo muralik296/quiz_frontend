@@ -1,64 +1,44 @@
-/* .center_div {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-}
-
-.center_div div{
-    margin: 10px;
-} */
-
 /* form.module.css */
-.center_div {
+
+.center_screen {
     display: flex;
-    justify-content: center;
     align-items: center;
-    height: 100vh;
+    justify-content: center;
+    min-height: 100vh;
+    margin: 50px;
 }
 
-.w-50 {
-    background-color: #ffffff; /* Set your desired background color */
-    border-radius: 10px; /* Set your desired border radius */
+.form_container {
+    background-color: #ffffff;
     padding: 20px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Optional: Add a box shadow */
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
 .form_title {
-    font-size: 1.5rem;
+    font-size: 24px;
     margin-bottom: 20px;
 }
 
-.form_group {
+.form_input,
+.form-control {
+    font-size: 16px;
     margin-bottom: 15px;
-}
-
-.form_label {
-    display: block;
-    margin-bottom: 5px;
-    font-weight: bold;
-}
-
-.form_input {
-    width: 100%;
-    padding: 8px;
-    border: 1px solid #ced4da;
-    border-radius: 4px;
-    box-sizing: border-box;
 }
 
 .radio_group {
-    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
 }
 
 .radio_item {
-    margin-right: 15px;
-}
-
-.radio_label {
-    margin-left: 5px;
+    display: flex;
+    align-items: center;
+    margin-right: 20px;
+    /* Adjust as needed */
 }
 
 .submit_button {
-    margin-top: 15px;
+    margin-top: 20px;
+    text-align: center;
 }

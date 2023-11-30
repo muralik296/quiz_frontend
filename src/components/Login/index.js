@@ -1,8 +1,19 @@
+// LoginComponent.js
 import React, { useState } from 'react';
-import { Form, Button, Container } from 'react-bootstrap';
+import axios from 'axios';
+import {
+    Container,
+    Paper,
+    TextField,
+    Button,
+    Radio,
+    FormControlLabel,
+    RadioGroup,
+    Typography,
+    Snackbar
+} from '@mui/material';
 import TeacherView from '../TeacherView';
 import StudentView from '../StudentView';
-import axios from 'axios';
 
 const LoginComponent = () => {
     const [formData, setFormData] = useState({
@@ -11,8 +22,8 @@ const LoginComponent = () => {
         is_teacher: false,
     });
 
-    const [data, setData] = useState(null)
-    const [err, setError] = useState(null)
+    const [data, setData] = useState(null);
+    const [err, setError] = useState(null);
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -30,71 +41,104 @@ const LoginComponent = () => {
                     },
                 }
             );
-            console.log(response.data, '=info from the login component')
             setData(response.data);
         } catch (error) {
             setError(error);
 
             setTimeout(() => {
                 setError(null);
-            }, 2000)
-            console.error('Login failed', error);
+            }, 2000);
         }
     };
 
+    const [snackbarOpen, setSnackbarOpen] = useState(false);
+
+    const handleSnackbarClose = () => {
+        setSnackbarOpen(false);
+    };
+
     if (formData.is_teacher && data && !err) {
-        return <TeacherView data={data} handleData={setData}/>
+        return <TeacherView data={data} handleData={setData} />;
     }
     if (!formData.is_teacher && data && !err) {
-        return <StudentView data={data} />
+        return <StudentView data={data} />;
     }
 
     return (
-        <Container>
-            <Form className="mt-5">
-                <Form.Group controlId="formEmail">
-                    <Form.Label>Email address</Form.Label>
-                    <Form.Control
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh' }}>
+            <Paper elevation={3} style={{ padding: '16px', maxWidth: '400px', width: '100%' , background: '#fff'}}>
+                <form>
+                    <Typography variant="h5" component="div" style={{ marginBottom: '16px' }}>
+                        Login
+                    </Typography>
+                    <TextField
+                        fullWidth
+                        label="Email address"
+                        variant="outlined"
                         type="email"
-                        placeholder="Enter email"
                         name="email_id"
-                        value={formData.email_id}
+                        placeholder="Enter email"
                         onChange={handleInputChange}
+                        required
+                        style={{ marginBottom: '16px' }}
+                        autoComplete='off'
                     />
-                </Form.Group>
-
-                <Form.Group controlId="formPassword">
-                    <Form.Label>Password</Form.Label>
-                    <Form.Control
+                    <TextField
+                        fullWidth
+                        label="Password"
+                        variant="outlined"
                         type="password"
-                        placeholder="Password"
                         name="password"
-                        value={formData.password}
                         onChange={handleInputChange}
-                    />
-                </Form.Group>
+                        required
+                        style={{ marginBottom: '16px' }}
+                        autoComplete='off'
 
-                <Form.Group controlId="formIsTeacher" className="mb-3">
-                    <Form.Check
-                        type="checkbox"
-                        label="I am a teacher"
+                    />
+                    <RadioGroup
+                        row
+                        aria-label="userType"
                         name="is_teacher"
-                        checked={formData.is_teacher}
-                        onChange={(e) =>
-                            setFormData({ ...formData, is_teacher: e.target.checked })
-                        }
+                        value={formData.is_teacher ? 'Teacher' : 'Student'}
+                        onChange={(e) => setFormData({ ...formData, is_teacher: e.target.value === 'Teacher' })}
+                        style={{ marginBottom: '16px' }}
+                    >
+                        <FormControlLabel
+                            value="Student"
+                            control={<Radio color="primary" />}
+                            label="Student"
+                        />
+                        <FormControlLabel
+                            value="Teacher"
+                            control={<Radio color="primary" />}
+                            label="Teacher"
+                        />
+                    </RadioGroup>
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        type="submit"
+                        onClick={(e) => {
+                            e.preventDefault();
+                            handleLogin();
+                            setSnackbarOpen(true);
+                        }}
+                        style={{ marginTop: '16px' }}
+                    >
+                        Login
+                    </Button>
+                    <Snackbar
+                        open={snackbarOpen}
+                        autoHideDuration={2000}
+                        onClose={handleSnackbarClose}
+                        message="Login Successful!"
                     />
-                </Form.Group>
-
-                <Button variant="primary" onClick={handleLogin}>
-                    Login
-                </Button>
-
-                <div className="mt-3">
-                    {err ? <div className='alert alert-danger'>{err?.response?.data?.error}</div> : null}
-                </div>
-            </Form>
-        </Container>
+                    <div style={{ color: 'red', marginTop: '16px' }}>
+                        {err ? <div className='alert alert-danger'>{err?.response?.data?.error}</div> : null}
+                    </div>
+                </form>
+            </Paper>
+        </div>
     );
 };
 

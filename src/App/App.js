@@ -7,6 +7,7 @@ import {
   Routes
 } from "react-router-dom";
 import LoginComponent from '../components/Login';
+import AboutPage from '../components/About';
 
 function App() {
   return (
@@ -20,7 +21,7 @@ function App() {
             <>
               <div className="row">
                 <div className='col-md-12'>
-                  <UserRegistration />
+                  <AboutPage />
                 </div>
               </div>
             </>
@@ -28,6 +29,17 @@ function App() {
 
           </Route>
 
+          <Route path='/register' element={
+            <>
+              <div className="row">
+                <div className='col-md-12'>
+                  <UserRegistration />
+                </div>
+              </div>
+            </>
+          }>
+
+          </Route>
           <Route path='/login' element={
             <>
               <div className="row">

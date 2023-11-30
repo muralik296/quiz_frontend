@@ -1,109 +1,154 @@
-import styles from './form.module.css';
-import { useState } from 'react';
-import StudentRegistrationForm from './StudentRegistration';
-import TeacherRegistrationForm from './TeacherRegistration';
+import React, { useState } from 'react';
 import axios from 'axios';
+import { Container, Grid, Paper, TextField, Button, Radio, FormControlLabel, RadioGroup } from '@mui/material';
+import styles from './form.module.css';
+import TeacherRegistrationForm from "./TeacherRegistration";
+import StudentRegistrationForm from "./StudentRegistration";
+import { NavLink } from 'react-router-dom';
 
 
 function UserRegistration() {
-
-    // state for registration page loader
     const [isRegistrationLoading, setRegistrationLoading] = useState(false);
+    const [data, setData] = useState(null);
+    const [is_teacher, setUser] = useState(false);
+    const [requestBody, setRequestBody] = useState({ is_teacher: false });
 
-    // state for data
-    const [data, setData] = useState(null)
-
-    // state for whether is_teacher - radio
-    const [is_teacher, setUser] = useState(false)
-
-    // request body changes
-    const [requestBody, setRequestBody] = useState({ is_teacher: false })
-
-    function handleRadioChange(event) {
-        setUser((prev) => !prev);
-        const { value } = event.target;
-
+    const handleRadioChange = (event) => {
+        setUser(event.target.value === 'Teacher');
         setRequestBody((prev) => ({
             ...prev,
-            ["is_teacher"]: value == 'Teacher' ? true : false,
+            is_teacher: event.target.value === 'Teacher',
         }));
-    }
+    };
 
-    function handleRequestBodyChange(event) {
+    const handleRequestBodyChange = (event) => {
         const { name, value } = event.target;
-
         setRequestBody((prev) => ({
             ...prev,
             [name]: value,
         }));
-    }
+    };
 
-    async function handleSubmission(event) {
-        setRegistrationLoading(true)
+    const handleSubmission = async (event) => {
+        event.preventDefault();
+        setRegistrationLoading(true);
 
-        const response = await axios.post('http://localhost:8000/quiz/registration/', requestBody);
-        console.log(response)
-        setData(response)
-
-    }
-
-    if (data) {
-        return (
-            <p>Your responses have been successfuly submitted.
-                You may login using the <a to='/login'>Login</a>
-            </p>
-        )
-    }
-
-    if (isRegistrationLoading) return (
-        <>Submitting your responses..</>
-    )
-
+        try {
+            const response = await axios.post(
+                'http://localhost:8000/quiz/registration/',
+                requestBody
+            );
+            console.log(response);
+            setData(response);
+        } catch (error) {
+            console.error('Error submitting form:', error);
+        } finally {
+            setRegistrationLoading(false);
+        }
+    };
 
     return (
-        <>
-            <div className={styles.center_div}>
-                <div className={`w-50 ${styles.form_container}`}>
-                    <div className={styles.form_title}>
-                        <strong>Registration Form</strong>
-                    </div>
-                    <div className={styles.form_group}>
-                        <label htmlFor="name" className={styles.form_label}>Name</label>
-                        <input onChange={handleRequestBodyChange} type="text" name="name" className={`form-control form-control-sm ${styles.form_input}`} placeholder="For ex. John Doe" required />
-                    </div>
+        <div className={styles.center_screen}>
 
-                    <div className={styles.form_group}>
-                        <label htmlFor="email" className={styles.form_label}>Email address</label>
-                        <input onChange={handleRequestBodyChange} type="email" name="email_id" className={`form-control form-control-sm ${styles.form_input}`} placeholder="For example: mburrannagar@binghamton.edu" required />
-                    </div>
+            <Container className={styles.center_screen}>
+                <Grid container justifyContent="center">
+                    <Grid item xs={12} md={8} lg={6}>
+                        <Paper elevation={3} className={styles.form_container}>
+                            <form>
+                                <h3 className={styles.form_title}>Registration Form</h3>
+                                <TextField
+                                    fullWidth
+                                    label="Name"
+                                    variant="outlined"
+                                    name="name"
+                                    placeholder="For ex. John Doe"
+                                    onChange={handleRequestBodyChange}
+                                    required
+                                    className={styles.form_input}
+                                    autoComplete="off"
+                                />
 
-                    <div className={styles.form_group}>
-                        <label htmlFor="password" className={styles.form_label}>Password</label>
-                        <input onChange={handleRequestBodyChange} type="password" name="password" className={`form-control form-control-sm ${styles.form_input}`} required />
-                    </div>
+                                <TextField
+                                    fullWidth
+                                    label="Email address"
+                                    variant="outlined"
+                                    type="email"
+                                    name="email_id"
+                                    placeholder="For example: mburrannagar@binghamton.edu"
+                                    onChange={handleRequestBodyChange}
+                                    required
+                                    className={styles.form_input}
+                                    autoComplete="off"
+                                />
 
-                    <div className={styles.form_group}>
-                        <div className={styles.radio_group}>
-                            <label>Are you a <strong>Student</strong> or <strong>Teacher</strong>?</label>
-                            <div className={`form-check form-check-inline ${styles.radio_item}`}>
-                                <input onChange={handleRadioChange} className="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" value="Student" required defaultChecked />
-                                <label className={`form-check-label ${styles.radio_label}`} htmlFor="inlineRadio1">Student</label>
-                            </div>
-                            <div className={`form-check form-check-inline ${styles.radio_item}`}>
-                                <input onChange={handleRadioChange} className="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2" value="Teacher" required />
-                                <label className={`form-check-label ${styles.radio_label}`} htmlFor="inlineRadio2">Teacher</label>
-                            </div>
-                        </div>
-                    </div>
+                                <TextField
+                                    fullWidth
+                                    label="Password"
+                                    variant="outlined"
+                                    type="password"
+                                    name="password"
+                                    onChange={handleRequestBodyChange}
+                                    required
+                                    className={styles.form_input}
+                                    autoComplete="off"
+                                />
 
-                    {is_teacher ? <TeacherRegistrationForm setRequestBody={setRequestBody} requestBody={requestBody} /> : <StudentRegistrationForm setRequestBody={setRequestBody} requestBody={requestBody} />}
+                                <RadioGroup
+                                    row
+                                    aria-label="userType"
+                                    name="userType"
+                                    value={is_teacher ? 'Teacher' : 'Student'}
+                                    onChange={handleRadioChange}
+                                    className={styles.radio_group}
+                                    autoComplete="off"
+                                >
+                                    <FormControlLabel
+                                        value="Student"
+                                        control={<Radio color="primary" />}
+                                        label="Student"
+                                        className={styles.radio_item}
+                                    />
+                                    <FormControlLabel
+                                        value="Teacher"
+                                        control={<Radio color="primary" />}
+                                        label="Teacher"
+                                        className={styles.radio_item}
+                                    />
+                                </RadioGroup>
 
-                    <div className={styles.submit_button}>
-                        <button className={`btn btn-outline-primary ${styles.submit_button}`} type="submit" onClick={handleSubmission}>Submit</button>
-                    </div>
-                </div>
-            </div>
-        </>
+                                {is_teacher ? (
+                                    <TeacherRegistrationForm
+                                        setRequestBody={setRequestBody}
+                                        requestBody={requestBody}
+                                    />
+                                ) : (
+                                    <StudentRegistrationForm
+                                        setRequestBody={setRequestBody}
+                                        requestBody={requestBody}
+                                    />
+                                )}
+
+                                <div className={styles.submit_button}>
+                                    <Button
+                                        variant="contained"
+                                        color="primary"
+                                        type="submit"
+                                        onClick={handleSubmission}
+                                    >
+                                        Submit
+                                    </Button>
+                                </div>
+                                <div style={{ textAlign: 'center',margin: '10px' }}>
+                                    <NavLink to="/login">Already Registerd? Login Here</NavLink>
+                                </div>
+                            </form>
+
+                        </Paper>
+                    </Grid>
+                </Grid>
+            </Container>
+        </div>
+
     );
 }
 
