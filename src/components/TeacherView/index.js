@@ -112,12 +112,16 @@ import { Card, Row, Col, Button } from 'react-bootstrap';
 import CreateQuiz from './CreateQuiz';
 import ManageQuiz from './ManageQuiz';
 import axios from 'axios';
+import Header from '../Header';
 
 function TeacherView(props) {
+
   const [quiz, setQuiz] = useState(null);
 
   const { data, handleData } = props;
-  const { courses_info } = data;
+  const { courses_info, teacher_info } = data;
+
+  const { teacher_id, name, email_id } = teacher_info;
 
   async function handleDelete(data) {
     const { courses_info, teacher_info } = data;
@@ -179,6 +183,7 @@ function TeacherView(props) {
 
   return (
     <div className='container-fluid'>
+      <Header name={name} email_id={email_id} is_student={false} />
 
       <Row className="mt-3">
         {courses_info.map((eachCourse, index) => (
