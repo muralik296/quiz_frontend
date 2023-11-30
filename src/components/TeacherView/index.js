@@ -116,21 +116,31 @@ import axios from 'axios';
 function TeacherView(props) {
   const [quiz, setQuiz] = useState(null);
 
+  const { data, handleData } = props;
+  const { courses_info } = data;
+
   async function handleDelete(data) {
     const { courses_info, teacher_info } = data;
     const { course_id } = courses_info[0];
-    const { student_id } = teacher_info;
+    const { teacher_id } = teacher_info;
 
-    const end_point = `http://127.0.0.1:8000/quiz/delete/${course_id}/`;
+    const end_point = `http://127.0.0.1:8000/quiz/delete/${course_id}/${teacher_id}`;
 
     try {
       const response = await axios.delete(end_point, {
         data: {
           course_id,
-          teacher_id: student_id,
+          teacher_id
         },
       });
-      console.log(response);
+      const result = response.data;
+      delete result['message'];
+
+      // changing the original data so that it renders with updated dataset
+      handleData(data);
+
+      console.log(data,' = after update');
+
     } catch (err) {
       console.error(err);
     }
@@ -158,12 +168,9 @@ function TeacherView(props) {
     }
   }
 
-  const { data } = props;
-  const { courses_info } = data;
-
   if (quiz) {
     if (!quiz.is_edit) {
-      return <CreateQuiz data={data} />;
+      return <CreateQuiz data={data} quiz={quiz}/>;
     }
     if (quiz.is_edit) {
       return <ManageQuiz data={data} quiz={quiz} />;
@@ -174,7 +181,7 @@ function TeacherView(props) {
     <Row className="mt-3">
       {courses_info.map((eachCourse, index) => (
         <Col key={index} md={4} className="mb-3">
-          <Card onClick={() => handleCourseClickTeacher(eachCourse)}>
+          <Card onClick={() => handleCourseClickTeacher(eachCourse)} style={{ margin: '15px' }}>
             <Card.Body>
               <Card.Title>{eachCourse.course_name}</Card.Title>
               <Card.Subtitle className="mb-2 text-muted">

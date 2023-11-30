@@ -13,7 +13,7 @@ const ManageQuiz = (props) => {
     const { start_time, start_date, duration } = quizzes_info[0];
     const [questions, setQuestions] = useState([]);
     const [error, setError] = useState(null);
-    const [finalData, setFinalData] = useState(null);
+    const [isUpdated, setIsUpdated] = useState(false);
     const [startDate, setStartDate] = useState(start_date);
     const [startTime, setStartTime] = useState(start_time);
     const [dur, setDuration] = useState(duration);
@@ -202,7 +202,12 @@ const ManageQuiz = (props) => {
                 }
             );
             console.log(response.data, '=success call');
-            setFinalData(response.data.message);
+            setIsUpdated(true);
+
+            setTimeout(() => {
+                setIsUpdated(false);
+            }, 2000);
+
         } catch (err) {
             setError(err);
             console.log(err, '=err');
@@ -222,33 +227,37 @@ const ManageQuiz = (props) => {
         );
     }
 
-    if (finalData) {
-        return (
-            <h4>
-                {finalData}
-            </h4>
-        );
-    }
 
     return (
-        <Container>
+        <Container className="mt-5 p-4" style={{ background: '#FFF7F0', borderRadius: '10px' }}>
+            <h2 className="mb-4">Update Quiz</h2>
+
+            {isUpdated ? (<div className="alert alert-success">{`Quiz updated Successfully`}</div>) : null}
+
             <Form onSubmit={handleQuizSubmit}>
-                <Form.Group controlId="startDate">
-                    <Form.Label>Start Date:</Form.Label>
-                    <Form.Control type="date" defaultValue={startDate} onChange={(e) => setStartDate(e.target.value)} required />
-                </Form.Group>
-                <Form.Group controlId="startTime">
-                    <Form.Label>Start Time:</Form.Label>
-                    <Form.Control type="time" defaultValue={startTime} onChange={(e) => setStartTime(e.target.value)} required />
-                </Form.Group>
-                <Form.Group controlId="duration">
-                    <Form.Label>Duration (in minutes):</Form.Label>
-                    <Form.Control type="number" min="1" defaultValue={dur} onChange={(e) => setDuration(e.target.value)} required />
-                </Form.Group>
-                {renderQuestionForm()}
-                <Button variant="primary" type="submit">
-                    Edit Quiz
-                </Button>
+                <div className="row">
+                    <div className='col-md-6'>
+                        <Form.Group controlId="startDate">
+                            <Form.Label>Start Date:</Form.Label>
+                            <Form.Control type="date" defaultValue={startDate} onChange={(e) => setStartDate(e.target.value)} required />
+                        </Form.Group>
+                        <Form.Group controlId="startTime">
+                            <Form.Label>Start Time:</Form.Label>
+                            <Form.Control type="time" defaultValue={startTime} onChange={(e) => setStartTime(e.target.value)} required />
+                        </Form.Group>
+                        <Form.Group controlId="duration">
+                            <Form.Label>Duration (in minutes):</Form.Label>
+                            <Form.Control type="number" min="1" defaultValue={dur} onChange={(e) => setDuration(e.target.value)} required />
+                        </Form.Group>
+                    </div>
+                    <div className='col-md-6'>
+                        {renderQuestionForm()}
+                        <Button variant="primary" type="submit">
+                            Update Quiz
+                        </Button>
+                    </div>
+                </div>
+
             </Form>
         </Container>
     );
