@@ -26,8 +26,8 @@ function UserRegistration() {
     const [data, setData] = useState(null);
     const [is_teacher, setUser] = useState(false);
     const [requestBody, setRequestBody] = useState({ is_teacher: false });
-    const [isError, setError] = useState(false)
-    
+    const [isError, setError] = useState(false);
+    const [isUiError, setuiError] = useState(false);
 
     const handleRadioChange = (event) => {
         setUser((prev) => !prev);
@@ -70,7 +70,10 @@ function UserRegistration() {
             const isSameCourseCode = hasDuplicateCourseCode(courses_list);
 
             if (isSameCourseCode) {
-                throw Error('You cannot register for the same course!');
+                setuiError('You cannot register for the same course twice!');
+                return setTimeout(()=>{
+                    setuiError(false);
+                },4000)
             }
 
             const response = await axios.post(
@@ -103,7 +106,9 @@ function UserRegistration() {
                     <Grid item xs={12} md={8} lg={6}>
                         <Paper elevation={3} className={styles.form_container}>
                             {data ? (<div className='alert alert-success'>Successfully Registred!</div>) : null}
-                            {isError ? <div className='alert alert-danger'>{isError?.response?.data?.error}</div> : null}
+                            {isError ? <div className='alert alert-danger'>{isError?.message}</div> : null}
+                            {isUiError ? <div className='alert alert-danger'>{isUiError}</div> : null}
+
                             <form>
                                 <h3 className={styles.form_title}>Register with us! <AppRegistrationIcon /></h3>
                                 <TextField
