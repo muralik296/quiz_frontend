@@ -60,21 +60,17 @@ const StudentView = (props) => {
         
         const isEligible = checkEligibility(start_time, start_date, duration);
         
-        console.log(isEligible);
+        console.log(isEligible,'= is eligible to take the quiz');
         
         return (
 
-            < Card key={index} style={{ borderRadius: '15px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', margin: '10px' }}>
+            < Card key={index} style={{ borderRadius: '15px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', margin: '10px' }} title={!isEligible ? 'You are not eligible to take the quiz at this time' : null}>
                 <Card.Body>
                     <Card.Title>{course_name}</Card.Title>
 
                     <Card.Text>Duration: {duration} minutes</Card.Text>
 
-                    <Button
-                        // disabled={!isQuizTimeValid(start_date, start_time, duration)}
-                        title={`Quiz starts at ${formatTime(new Date(quizzes_info[0]?.start_date))}`}
-                        onClick={(e) => handleQuiz(subject)}
-                    >
+                    <Button disabled={!isEligible ? true : false} onClick={(e) => handleQuiz(subject)} >
                         Take Quiz
                     </Button>
                 </Card.Body>
