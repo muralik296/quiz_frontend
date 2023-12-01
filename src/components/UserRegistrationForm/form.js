@@ -7,12 +7,27 @@ import StudentRegistrationForm from "./StudentRegistration";
 import { NavLink } from 'react-router-dom';
 import AppRegistrationIcon from '@mui/icons-material/AppRegistration';
 
+// duplicate course code return true or false
+function hasDuplicateCourseCode(coursesList) {
+    const courseCodeSet = new Set();
+
+    for (const course of coursesList) {
+        if (courseCodeSet.has(course.course_code)) {
+            return true;
+        }
+        courseCodeSet.add(course.course_code);
+    }
+
+    return false; // No duplicate course code found
+}
+
+
 function UserRegistration() {
     const [data, setData] = useState(null);
     const [is_teacher, setUser] = useState(false);
     const [requestBody, setRequestBody] = useState({ is_teacher: false });
     const [isError, setError] = useState(false)
-
+    
 
     const handleRadioChange = (event) => {
         setUser((prev) => !prev);
@@ -38,6 +53,26 @@ function UserRegistration() {
         event.preventDefault();
 
         try {
+            // Update: we need to check in the request body if user is trying to register for courses which share same course code
+            // courses_list": [
+            //     {
+            //         "course_code": "501",
+            //         "teacher_id": "1"
+            //     },
+            //     {
+            //         "course_code": "501",
+            //         "teacher_id": "2"
+            //     }
+            // ]
+
+            const { courses_list } = requestBody;
+            // flag which checks if more than one course share same course code
+            const isSameCourseCode = hasDuplicateCourseCode(courses_list);
+
+            if (isSameCourseCode) {
+                throw Error('You cannot register for the same course!');
+            }
+
             const response = await axios.post(
                 `http://${process.env.REACT_APP_SERVER_HOST}:${process.env.REACT_APP_SERVER_PORT}/quiz/registration/`,
                 requestBody
@@ -53,7 +88,10 @@ function UserRegistration() {
             }, 2000)
         } catch (error) {
             console.error('Error submitting form:', error);
-            setError(error);
+            setError(error)
+            setTimeout(() => {
+                setError(false);
+            }, 4000)
         }
     };
 

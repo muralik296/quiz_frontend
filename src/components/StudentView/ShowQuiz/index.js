@@ -120,7 +120,7 @@ function ShowQuiz(props) {
     // check the remaining time
     if (remainingTime?.hours === 0 && remainingTime?.minutes === 0 && remainingTime?.seconds === 0) {
         return (
-            <div className='alert alert-danger'>
+            <div className='container-fluid alert alert-danger'>
                 Time's up!
             </div>
         )
