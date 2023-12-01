@@ -1,21 +1,28 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Form, Button, Container, Row, Col } from 'react-bootstrap';
 import axios from 'axios';
 import QuizSubmit from '../SuccessQuizSubmit';
 import QuizTimer from '../QuizTimer/index';
 
+// helper function that will tell me whether 
+const formatTime = (time) => (time < 10 ? `0${time}` : time);
+
 function ShowQuiz(props) {
+
     const { quizData, student_id } = props;
     const { quizInfo, subject } = quizData;
-    // console.log(quizInfo, '= quiz info');
-    // console.log(subject, '=subject');
 
+    // remaining time will give me whether user is out of time
+    const [remainingTime, setRemainingTime] = useState(0);
 
+    const myForm = useRef(null);
+
+    console.log(remainingTime, '=remaining time');
     const [finalSubmission, setFinalSubmission] = useState(null);
     const { course_id, course_name, quizzes_info } = subject;
     const { start_date, start_time, duration } = quizzes_info[0];
     const { questions } = quizInfo;
-    // console.log(questions, '=questions');
+
 
     const handleAnswerChange = (questionIndex, optionIndex) => {
         const questionName = questions[questionIndex]?.question;
@@ -109,15 +116,25 @@ function ShowQuiz(props) {
         )
     }
 
+
+    // check the remaining time
+    if (remainingTime?.hours === 0 && remainingTime?.minutes === 0 && remainingTime?.seconds === 0) {
+        return (
+            <div className='alert alert-danger'>
+                Time's up!
+            </div>
+        )
+    }
+
     return (
         <>
             <h4 className="mt-4 mb-4">Quiz for {course_name}</h4>
-            <QuizTimer startTime={`${start_date} ${start_time}`} duration={duration} />
+            <QuizTimer startTime={`${start_date} ${start_time}`} duration={duration} remainingTime={remainingTime} setRemainingTime={setRemainingTime} />
             <Container>
                 {(finalSubmission?.flag == false) ? <div className='alert alert-danger'>
                     Error Occured while trying to submit your responses
                 </div> : null}
-                <Form onSubmit={handleSubmit}>
+                <Form ref={myForm} onSubmit={handleSubmit}>
                     {questions.map((question, questionIndex) => (
                         <div key={questionIndex}>
                             <h4>{question.question}</h4>

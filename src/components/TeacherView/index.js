@@ -143,6 +143,7 @@ function TeacherView(props) {
         ))}
       </Row>
     </div>
+
   );
 }
 

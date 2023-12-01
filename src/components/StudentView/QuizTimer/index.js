@@ -2,8 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { Card } from 'react-bootstrap';
 
-const QuizTimer = ({ startTime, duration }) => {
-    const [remainingTime, setRemainingTime] = useState(0);
+const QuizTimer = ({ startTime, duration, remainingTime, setRemainingTime }) => {
 
     useEffect(() => {
         let intervalId;
