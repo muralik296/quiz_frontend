@@ -5,7 +5,7 @@ import QuizIcon from '@mui/icons-material/Quiz';
 import { AccountContext } from '../../Store/AccountContext';
 
 function NavBar() {
-    const { isAuth, setAuth, data, setData } = useContext(AccountContext);
+    const { is_teacher, isAuth, setAuth, data, setData } = useContext(AccountContext);
     console.log(isAuth)
     return (
         <AppBar position="static">
@@ -20,9 +20,9 @@ function NavBar() {
                 </Button> */}
                 {isAuth ? (
                     <>
-                        {/* <Button color="inherit" component={Link} to={isAuth }> */}
+                        <Button color="inherit" component={Link} to={is_teacher ? "/teacherView" : "/studentView"}>
                             Dashboard
-                        {/* </Button> */}
+                        </Button>
                     </>
                 ) : (
                     <>

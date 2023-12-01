@@ -19,7 +19,7 @@ import { Navigate } from "react-router-dom";
 
 
 const LoginComponent = () => {
-    const { isAuth, setAuth, data, setData } = useContext(AccountContext);
+    const { setIsTeacher, isAuth, setAuth, data, setData } = useContext(AccountContext);
 
     const [formData, setFormData] = useState({
         email_id: '',
@@ -45,8 +45,13 @@ const LoginComponent = () => {
                     },
                 }
             );
-            
+
             setData(response.data);
+            if (formData.is_teacher){
+                setIsTeacher(true)
+            }else{
+                setIsTeacher(false)
+            }
             setAuth(true);
 
         } catch (error) {
