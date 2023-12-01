@@ -9,6 +9,7 @@ const ClassStatistics = ({ course_id }) => {
     const [err, setError] = useState(false);
 
     useEffect(() => {
+        
         const fetchStats = async () => {
             try {
                 const end_point = `http://${process.env.REACT_APP_SERVER_HOST}:${process.env.REACT_APP_SERVER_PORT}/quiz/teacher/statsview/${course_id}/`;
