@@ -4,6 +4,12 @@ import { AppBar, Toolbar, Typography, Button } from '@mui/material';
 import QuizIcon from '@mui/icons-material/Quiz';
 import { AccountContext } from '../../Store/AccountContext';
 
+function quizIconLink(isAuth, is_teacher) {
+    if (is_teacher && isAuth) return '/teacherView'
+    else if (!is_teacher && isAuth) return '/studentView'
+    else return '/'
+}
+
 function NavBar() {
     const { is_teacher, isAuth, setAuth, data, setData } = useContext(AccountContext);
     console.log(isAuth)
@@ -11,7 +17,7 @@ function NavBar() {
         <AppBar position="static">
             <Toolbar>
                 <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-                    <Link to="/" style={{ textDecoration: 'none', color: 'white' }}>
+                    <Link to={quizIconLink(isAuth, is_teacher)} style={{ textDecoration: 'none', color: 'white' }}>
                         <QuizIcon />
                     </Link>
                 </Typography>

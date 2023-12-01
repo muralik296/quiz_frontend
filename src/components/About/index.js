@@ -1,11 +1,25 @@
-import React from 'react';
+import { useContext } from 'react';
 import { Container, Typography, Paper } from '@mui/material';
 import { NavLink } from 'react-router-dom';
+import { AccountContext } from '../../Store/AccountContext';
+import { useNavigate } from 'react-router-dom';
 
 const AboutPage = () => {
+    const navigate = useNavigate();
+
+    const { is_teacher, isAuth, data, setData } = useContext(AccountContext);
+
+    if (is_teacher && isAuth) {
+        navigate('/teacherView');
+    }
+    else if (!is_teacher && isAuth) {
+        navigate('/studentView');
+    }
+
     return (
+
         <Container sx={{ paddingTop: 4 }}>
-            
+
             <Paper elevation={3} sx={{ padding: 4 }}>
                 <Typography variant="h4" gutterBottom>
                     About Quiz App

@@ -51,7 +51,7 @@ const CreateQuiz = () => {
     const [startTime, setStartTime] = useState('');
     const [startDate, setStartDate] = useState('');
     const [duration, setDuration] = useState('');
-    const [numberOfQuestions, setNumberOfQuestions] = useState(10);
+    const [numberOfQuestions, setNumberOfQuestions] = useState(0);
     const [questions, setQuestions] = useState([]);
 
 
@@ -261,7 +261,7 @@ const CreateQuiz = () => {
                     <div className="col-md-6">
                         <Form.Group controlId="numberOfQuestions">
                             <Form.Label>Number of Questions:</Form.Label>
-                            <Form.Control type="number" onChange={(e) => setNumberOfQuestions(e.target.value)} required />
+                            <Form.Control type="number" min="1" defaultValue="0" onChange={(e) => setNumberOfQuestions(e.target.value)} required />
                         </Form.Group>
 
                         {renderQuestionForm()}
