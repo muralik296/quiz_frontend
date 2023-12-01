@@ -1,8 +1,9 @@
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import { Button, Card, Row, Col } from 'react-bootstrap';
 import axios from 'axios';
 import ShowQuiz from './ShowQuiz';
 import Header from '../Header';
+import { AccountContext } from '../../Store/AccountContext';
 
 
 // helper function
@@ -32,9 +33,9 @@ function checkEligibility(startTime, startDate, duration) {
     return now >= startDateTime && now <= endTime;
 }
 
-const StudentView = (props) => {
-    console.log(props, '= props in student view')
-    const { data } = props;
+const StudentView = () => {
+    const { data, setData } = useContext(AccountContext);
+
 
     const [quizData, setQuizData] = useState(null);
 
@@ -56,12 +57,12 @@ const StudentView = (props) => {
         }
 
         const { start_date, start_time, duration } = quizzes_info[0];
-        
-        
+
+
         const isEligible = checkEligibility(start_time, start_date, duration);
-        
-        console.log(isEligible,'= is eligible to take the quiz');
-        
+
+        console.log(isEligible, '= is eligible to take the quiz');
+
         return (
 
             < Card key={index} style={{ borderRadius: '15px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', margin: '10px' }} title={!isEligible ? 'You are not eligible to take the quiz at this time' : null}>
@@ -70,7 +71,10 @@ const StudentView = (props) => {
 
                     <Card.Text>Duration: {duration} minutes</Card.Text>
 
-                    <Button disabled={!isEligible ? true : false} onClick={(e) => handleQuiz(subject)} >
+                    <Button
+
+                        //TO DO.  disabled={!isEligible ? true : false} 
+                        onClick={(e) => handleQuiz(subject)} >
                         Take Quiz
                     </Button>
                 </Card.Body>
@@ -125,6 +129,7 @@ const StudentView = (props) => {
                 })}
             </Row>
         </div>
+
     );
 };
 

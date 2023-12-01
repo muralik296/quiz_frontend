@@ -1,9 +1,12 @@
-import React from 'react';
+import { useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { AppBar, Toolbar, Typography, Button } from '@mui/material';
 import QuizIcon from '@mui/icons-material/Quiz';
+import { AccountContext } from '../../Store/AccountContext';
 
 function NavBar() {
+    const { isAuth, setAuth, data, setData } = useContext(AccountContext);
+    console.log(isAuth)
     return (
         <AppBar position="static">
             <Toolbar>
@@ -15,12 +18,23 @@ function NavBar() {
                 {/* <Button color="inherit" component={Link} to="/about">
                     About
                 </Button> */}
-                <Button color="inherit" component={Link} to="/login">
-                    Login
-                </Button>
-                <Button color="inherit" component={Link} to="/register">
-                    Register
-                </Button>
+                {isAuth ? (
+                    <>
+                        {/* <Button color="inherit" component={Link} to={isAuth }> */}
+                            Dashboard
+                        {/* </Button> */}
+                    </>
+                ) : (
+                    <>
+                        <Button color="inherit" component={Link} to="/login">
+                            Login
+                        </Button>
+                        <Button color="inherit" component={Link} to="/register">
+                            Register
+                        </Button>
+                    </>
+                )}
+
             </Toolbar>
         </AppBar>
     );

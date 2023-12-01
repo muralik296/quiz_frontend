@@ -1,5 +1,5 @@
 // LoginComponent.js
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import axios from 'axios';
 import {
     Container,
@@ -12,17 +12,21 @@ import {
     Typography,
     Snackbar
 } from '@mui/material';
-import TeacherView from '../TeacherView';
-import StudentView from '../StudentView';
+
+
+import { AccountContext } from "../../Store/AccountContext";
+import { Navigate } from "react-router-dom";
+
 
 const LoginComponent = () => {
+    const { isAuth, setAuth, data, setData } = useContext(AccountContext);
+
     const [formData, setFormData] = useState({
         email_id: '',
         password: '',
         is_teacher: false,
     });
 
-    const [data, setData] = useState(null);
     const [err, setError] = useState(null);
 
     const handleInputChange = (e) => {
@@ -41,7 +45,10 @@ const LoginComponent = () => {
                     },
                 }
             );
+            
             setData(response.data);
+            setAuth(true);
+
         } catch (error) {
             setError(error);
 
@@ -57,16 +64,19 @@ const LoginComponent = () => {
         setSnackbarOpen(false);
     };
 
-    if (formData.is_teacher && data && !err) {
-        return <TeacherView data={data} handleData={setData} />;
+    // post login, if user is teacher, we take him to teacher view
+    if (formData.is_teacher && data && !err && isAuth) {
+        return <Navigate to="/teacherView" />;
     }
-    if (!formData.is_teacher && data && !err) {
-        return <StudentView data={data} />;
+
+    // post login, if user is student, we take him to student view
+    if (!formData.is_teacher && data && !err && isAuth) {
+        return <Navigate to="/studentView" />;
     }
 
     return (
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh' }}>
-            <Paper elevation={3} style={{ padding: '16px', maxWidth: '400px', width: '100%' , background: '#fff'}}>
+            <Paper elevation={3} style={{ padding: '16px', maxWidth: '400px', width: '100%', background: '#fff' }}>
                 <form>
                     <Typography variant="h5" component="div" style={{ marginBottom: '16px' }}>
                         Login

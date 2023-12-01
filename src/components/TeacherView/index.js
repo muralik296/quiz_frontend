@@ -1,30 +1,31 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { Card, Row, Col, Button } from 'react-bootstrap';
-import CreateQuiz from './CreateQuiz';
-import ManageQuiz from './ManageQuiz';
+
 import axios from 'axios';
 import Header from '../Header';
 import ClassStatistics from './Stats';
+import { AccountContext } from '../../Store/AccountContext';
+import { useNavigate } from 'react-router-dom';
 
-function TeacherView(props) {
+function TeacherView() {
+  const navigate = useNavigate();
+
+  // account information from account context
+  const { data, setData } = useContext(AccountContext);
 
   const [quiz, setQuiz] = useState(null);
 
-  const { data, handleData } = props;
   const { courses_info, teacher_info } = data;
 
   const { teacher_id, name, email_id } = teacher_info;
 
-  const [isStats, setIsStats] = useState(false);
 
   function handleStats(data) {
     const { courses_info, teacher_info } = data;
     const { course_id } = courses_info[0];
 
-    setIsStats({
-      isStats: true,
-      course_id
-    })
+    return navigate('/classStats', { state: { course_id } })
+
 
   }
 
@@ -47,7 +48,7 @@ function TeacherView(props) {
       delete result['message'];
 
       // changing the original data so that it renders with updated dataset
-      handleData(data);
+      setData(data);
 
       console.log(data, ' = after update');
 
@@ -56,44 +57,23 @@ function TeacherView(props) {
     }
   }
 
-  function handleCourseClickTeacher(clickedCourse) {
-    console.log(clickedCourse);
-  }
+  // function handleCourseClickTeacher(clickedCourse) {
+  //   console.log(clickedCourse);
+  // }
 
   function handleQuiz(clickedCourse) {
     const isQuiz = clickedCourse.quizzes_info.length > 0;
 
     if (isQuiz) {
       // Edit Quiz Component needs to be rendered
-      setQuiz({
-        course: clickedCourse,
-        is_edit: true,
-      });
+      return navigate('/manageQuiz', { state: { clickedCourse } })
     } else {
+      console.log('here at create')
       // Create quiz component will be rendered
-      setQuiz({
-        course: clickedCourse,
-        is_edit: false,
-      });
+      return navigate('/createQuiz', { state: { clickedCourse } });
     }
   }
 
-
-  if (isStats?.isStats) {
-    return (
-      <ClassStatistics course_id={isStats?.course_id} />
-    )
-  }
-
-  if (quiz) {
-    if (!quiz.is_edit) {
-      return <CreateQuiz data={data} quiz={quiz} />;
-    }
-    if (quiz.is_edit) {
-
-      return <ManageQuiz data={data} quiz={quiz} />;
-    }
-  }
 
   return (
     <div className='container-fluid'>
@@ -102,7 +82,7 @@ function TeacherView(props) {
       <Row className="mt-3">
         {courses_info.map((eachCourse, index) => (
           <Col key={index} md={4} className="mb-3">
-            <Card onClick={() => handleCourseClickTeacher(eachCourse)} style={{ margin: '15px' }}>
+            <Card style={{ margin: '15px' }}>
               <Card.Body>
                 <Card.Title>{eachCourse.course_name}</Card.Title>
                 <Card.Subtitle className="mb-2 text-muted">

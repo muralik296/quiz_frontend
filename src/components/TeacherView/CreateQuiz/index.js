@@ -1,8 +1,11 @@
 // CreateQuiz.js
 
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { Form, Button, Container, Card } from 'react-bootstrap';
 import axios from 'axios';
+import { AccountContext } from '../../../Store/AccountContext';
+import { useLocation } from 'react-router-dom';
+
 
 // helper function to convert the time to AM-PM to send backend 
 function convertTo12HourFormat(time24) {
@@ -21,11 +24,21 @@ function convertTo12HourFormat(time24) {
     return time12;
 }
 
-const CreateQuiz = (props) => {
+const CreateQuiz = () => {
 
-    const { data, quiz } = props;
-    const { course } = quiz;
-    const { course_code, course_id, course_name, quizzes_info } = course;
+    // useLocation hook gives access to the current location (including state)
+    const location = useLocation();
+
+    // Access the state from the location object
+    const { state } = location;
+    
+    // Access specific properties from the state
+    const { quiz } = state || {};
+    const { clickedCourse } = state;
+    const { data, setData } = useContext(AccountContext);
+    
+    const { course_code, course_id, course_name, quizzes_info } = clickedCourse;
+
     const { teacher_info, courses_info } = data;
 
     const { teacher_id } = teacher_info;
@@ -220,12 +233,6 @@ const CreateQuiz = (props) => {
         };
         setQuestions(updatedQuestions);
     };
-
-
-
-
-
-
 
     return (
         <Container className="mt-5 p-4" style={{ background: '#FFF7F0', borderRadius: '10px' }}>

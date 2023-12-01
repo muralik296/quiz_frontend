@@ -1,11 +1,24 @@
-import React, { useState, useEffect } from 'react';
+import { useContext, useState, useEffect } from 'react';
 import { Form, Button, Container, Card } from 'react-bootstrap';
 import axios from 'axios';
+import { AccountContext } from '../../../Store/AccountContext';
+import { useLocation } from 'react-router-dom';
 
-const ManageQuiz = (props) => {
-    const { data, quiz } = props;
-    const { course } = quiz;
-    const { course_code, course_id, course_name, quizzes_info } = course;
+
+const ManageQuiz = () => {
+
+    // account information from account context
+    const { data, setData } = useContext(AccountContext);
+
+    // useLocation hook gives access to the current location (including state)
+    const location = useLocation();
+
+    // Access the state from the location object
+    const { state } = location;
+
+    const { clickedCourse } = state;
+
+    const { course_code, course_id, course_name, quizzes_info } = clickedCourse;
     const { teacher_info, courses_info } = data;
 
     const { teacher_id } = teacher_info;
