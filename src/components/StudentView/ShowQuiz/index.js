@@ -1,20 +1,16 @@
-import { useState, useRef, useEffect } from 'react';
-import { Form, Button, Container, Row, Col } from 'react-bootstrap';
+import React, { useState, useRef } from 'react';
+import { Card, CardContent, Typography, Grid, Button, Container, Checkbox, FormControlLabel } from '@mui/material';
 import axios from 'axios';
 import QuizSubmit from '../SuccessQuizSubmit';
 import QuizTimer from '../QuizTimer/index';
 
-// helper function that will tell me whether 
 const formatTime = (time) => (time < 10 ? `0${time}` : time);
 
 function ShowQuiz(props) {
-
     const { quizData, student_id } = props;
     const { quizInfo, subject } = quizData;
 
-    // remaining time will give me whether user is out of time
     const [remainingTime, setRemainingTime] = useState(0);
-
     const myForm = useRef(null);
 
     console.log(remainingTime, '=remaining time');
@@ -23,36 +19,25 @@ function ShowQuiz(props) {
     const { start_date, start_time, duration } = quizzes_info[0];
     const { questions } = quizInfo;
 
-
     const handleAnswerChange = (questionIndex, optionIndex) => {
         const questionName = questions[questionIndex]?.question;
         const answerChosen = questions[questionIndex]?.options[optionIndex];
         const type = questions[questionIndex]?.type;
-        console.log(type, '= type of question')
-        setAnswers((prevAnswers) => {
-            // console.log(prevAnswers, '= previous answers array')
-            const updatedAnswers = [...prevAnswers];
 
-            // Check if the question is already present in updatedAnswers
+        setAnswers((prevAnswers) => {
+            const updatedAnswers = [...prevAnswers];
             const existingAnswerIndex = updatedAnswers.findIndex((ans) => ans.question === questionName);
 
             if (existingAnswerIndex !== -1) {
-                // If the question is present, update the chosen_option
-                if (type == 'multipleChoice') {
+                if (type === 'multipleChoice') {
                     updatedAnswers[existingAnswerIndex].chosen_option = answerChosen;
-                }
-                // multiple answer type
-                else {
-                    // i need to first check if the selected item by user already is in the existing answer
+                } else {
                     if (!updatedAnswers[existingAnswerIndex].chosen_option.includes(answerChosen)) {
-                        updatedAnswers[existingAnswerIndex].chosen_option.push(answerChosen)
+                        updatedAnswers[existingAnswerIndex].chosen_option.push(answerChosen);
                     }
                 }
             } else {
-                // If the question is not present, add a new answer
-
-                // if type of question is multiple answer, then i use array for answer chosen
-                if (type == 'multipleChoice') {
+                if (type === 'multipleChoice') {
                     updatedAnswers.push({
                         question: questionName,
                         chosen_option: answerChosen,
@@ -61,9 +46,8 @@ function ShowQuiz(props) {
                     updatedAnswers.push({
                         question: questionName,
                         chosen_option: [answerChosen],
-                    })
+                    });
                 }
-
             }
 
             return updatedAnswers;
@@ -76,19 +60,16 @@ function ShowQuiz(props) {
 
             const requestBody = { answers: answers.flat() };
             console.log(requestBody, '= final request to send');
-            // make call to backend for sending q/a to api
-            const endpoint = `http://${process.env.REACT_APP_SERVER_HOST}:${process.env.REACT_APP_SERVER_PORT}/quiz/student/${course_id}/${student_id}/answers/`
+            const endpoint = `http://${process.env.REACT_APP_SERVER_HOST}:${process.env.REACT_APP_SERVER_PORT}/quiz/student/${course_id}/${student_id}/answers/`;
 
             const res = await axios.post(endpoint, requestBody);
 
             console.log(res.data);
-            setFinalSubmission({ data: res.data, flag: true })
+            setFinalSubmission({ data: res.data, flag: true });
         } catch (err) {
             setFinalSubmission({ flag: false, data: err });
             console.log(err);
         }
-
-
     };
 
     const [answers, setAnswers] = useState([]);
@@ -97,64 +78,70 @@ function ShowQuiz(props) {
         const inputType = questions[questionIndex]?.type === 'multipleChoice' ? 'radio' : 'checkbox';
 
         return (
-            <Form.Check
+            <FormControlLabel
                 key={optionIndex}
-                type={inputType}
+                control={<Checkbox />}
                 label={questions[questionIndex]?.options[optionIndex]}
                 onChange={() => handleAnswerChange(questionIndex, optionIndex)}
-                name={inputType === 'radio' ? `question-${questionIndex}` : undefined}
-                className="mb-2" // Add margin between options
             />
         );
     };
 
-    // means user has submitted the responses
     if (finalSubmission?.flag) {
-        // render another component that shows the student his score and average etc.
-        return (
-            <QuizSubmit finalSubmission={finalSubmission} />
-        )
+        return <QuizSubmit finalSubmission={finalSubmission} />;
     }
 
-
-    // check the remaining time
     if (remainingTime?.hours === 0 && remainingTime?.minutes === 0 && remainingTime?.seconds === 0) {
         return (
             <div className='container-fluid alert alert-danger'>
                 Time's up!
             </div>
-        )
+        );
     }
 
     return (
-        <>
-            <h4 className="mt-4 mb-4">Quiz for {course_name}</h4>
-            <QuizTimer startTime={`${start_date} ${start_time}`} duration={duration} remainingTime={remainingTime} setRemainingTime={setRemainingTime} />
-            <Container>
-                {(finalSubmission?.flag == false) ? <div className='alert alert-danger'>
-                    Error Occured while trying to submit your responses
-                </div> : null}
-                <Form ref={myForm} onSubmit={handleSubmit}>
-                    {questions.map((question, questionIndex) => (
-                        <div key={questionIndex}>
-                            <h4>{question.question}</h4>
-                            <Form.Group as={Row}>
-                                {question.options.map((option, optionIndex) => (
-                                    <Col key={optionIndex} xs={12} md={6}>
-                                        {renderInput(questionIndex, optionIndex)}
-                                    </Col>
-                                ))}
-                            </Form.Group>
-                        </div>
-                    ))}
-                    <Button variant="primary" type="submit">
-                        Submit
-                    </Button>
-                </Form>
-            </Container>
-        </>
-    );
+        <Grid container style={{ marginTop: '1rem' }}>
+            <Grid item xs={12}>
+                <Container>
+                    <Typography variant="h6" gutterBottom>
+                        Quiz for {course_name}
+                    </Typography>
+                </Container>
 
+                <QuizTimer startTime={`${start_date} ${start_time}`} duration={duration} remainingTime={remainingTime} setRemainingTime={setRemainingTime} />
+                <Container>
+                    {finalSubmission?.flag === false && (
+                        <div style={{ marginTop: '1rem', marginBottom: '1rem' }} className='alert alert-danger'>
+                            Error Occurred while trying to submit your responses
+                        </div>
+                    )}
+
+                    {questions.map((question, questionIndex) => (
+                        <Card key={questionIndex} style={{ marginBottom: '1rem' }}>
+                            <CardContent>
+                                <Typography variant="h6" style={{ marginBottom: '0.5rem' }}>
+                                    {question.question}
+                                </Typography>
+                                <div>
+                                    {question.options.map((option, optionIndex) => (
+                                        <div key={optionIndex}>
+                                            {renderInput(questionIndex, optionIndex)}
+                                        </div>
+                                    ))}
+                                </div>
+                            </CardContent>
+                        </Card>
+                    ))}
+
+                    <form ref={myForm} onSubmit={handleSubmit} style={{ marginTop: '1rem' }}>
+                        <Button variant="contained" color="primary" type="submit">
+                            Submit
+                        </Button>
+                    </form>
+                </Container>
+            </Grid>
+        </Grid>
+    );
 }
 
 export default ShowQuiz;
