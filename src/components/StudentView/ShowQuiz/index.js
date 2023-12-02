@@ -1,5 +1,5 @@
 import React, { useState, useRef,useEffect } from 'react';
-import { Card, CardContent, Typography, Grid, Button, Container, Checkbox, FormControlLabel } from '@mui/material';
+import { Card, CardContent, Typography, Grid, Button, Container, Checkbox, FormControlLabel, Radio } from '@mui/material';
 import axios from 'axios';
 import QuizSubmit from '../SuccessQuizSubmit';
 import QuizTimer from '../QuizTimer/index';
@@ -34,42 +34,77 @@ function ShowQuiz(props) {
         }
     }, [remainingTime]);
 
+    // const handleAnswerChange = (questionIndex, optionIndex) => {
+    //     const questionName = questions[questionIndex]?.question;
+    //     const answerChosen = questions[questionIndex]?.options[optionIndex];
+    //     const type = questions[questionIndex]?.type;
+
+    //     setAnswers((prevAnswers) => {
+    //         const updatedAnswers = [...prevAnswers];
+    //         const existingAnswerIndex = updatedAnswers.findIndex((ans) => ans.question === questionName);
+
+    //         console.log(type,'this is the')
+    //         if (existingAnswerIndex !== -1) {
+    //             if (type === 'multipleChoice') {
+    //                 updatedAnswers[existingAnswerIndex].chosen_option = answerChosen;
+    //             } else {
+    //                 if (!updatedAnswers[existingAnswerIndex].chosen_option.includes(answerChosen)) {
+    //                     updatedAnswers[existingAnswerIndex].chosen_option.push(answerChosen);
+    //                 }
+    //             }
+    //         } else {
+    //             if (type === 'multipleChoice') {
+    //                 updatedAnswers.push({
+    //                     question: questionName,
+    //                     chosen_option: answerChosen,
+    //                 });
+    //             } else {
+    //                 updatedAnswers.push({
+    //                     question: questionName,
+    //                     chosen_option: [answerChosen],
+    //                 });
+    //             }
+    //         }
+
+    //         return updatedAnswers;
+    //     });
+    // };
+
     const handleAnswerChange = (questionIndex, optionIndex) => {
-        const questionName = questions[questionIndex]?.question;
-        const answerChosen = questions[questionIndex]?.options[optionIndex];
-        const type = questions[questionIndex]?.type;
-
-        setAnswers((prevAnswers) => {
-            const updatedAnswers = [...prevAnswers];
-            const existingAnswerIndex = updatedAnswers.findIndex((ans) => ans.question === questionName);
-
-            if (existingAnswerIndex !== -1) {
-                if (type === 'multipleChoice') {
-                    updatedAnswers[existingAnswerIndex].chosen_option = answerChosen;
-                } else {
-                    if (!updatedAnswers[existingAnswerIndex].chosen_option.includes(answerChosen)) {
-                        updatedAnswers[existingAnswerIndex].chosen_option.push(answerChosen);
-                    }
-                }
+        const question = questions[questionIndex];
+        const selectedOption = question.options[optionIndex];
+        const updatedAnswers = [...answers];
+    
+        const existingAnswerIndex = updatedAnswers.findIndex(ans => ans.question === question.question);
+    
+        if (existingAnswerIndex !== -1) {
+            if (question.type === 'multipleChoice') {
+                updatedAnswers[existingAnswerIndex].chosen_option = selectedOption;
             } else {
-                if (type === 'multipleChoice') {
-                    updatedAnswers.push({
-                        question: questionName,
-                        chosen_option: answerChosen,
-                    });
+                const foundIndex = updatedAnswers[existingAnswerIndex].chosen_option.indexOf(selectedOption);
+                if (foundIndex !== -1) {
+                    updatedAnswers[existingAnswerIndex].chosen_option.splice(foundIndex, 1);
                 } else {
-                    updatedAnswers.push({
-                        question: questionName,
-                        chosen_option: [answerChosen],
-                    });
+                    updatedAnswers[existingAnswerIndex].chosen_option.push(selectedOption);
                 }
             }
-
-            return updatedAnswers;
-        });
+        } else {
+            if (question.type === 'multipleChoice') {
+                updatedAnswers.push({
+                    question: question.question,
+                    chosen_option: selectedOption,
+                });
+            } else {
+                updatedAnswers.push({
+                    question: question.question,
+                    chosen_option: [selectedOption],
+                });
+            }
+        }
+    
+        setAnswers(updatedAnswers);
     };
-
- 
+    
 
     const submitQuiz = async () => {
         try {
@@ -104,19 +139,77 @@ function ShowQuiz(props) {
 
     const [answers, setAnswers] = useState([]);
 
-    const renderInput = (questionIndex, optionIndex) => {
-        const inputType = questions[questionIndex]?.type === 'multipleChoice' ? 'radio' : 'checkbox';
+    // const renderInput = (questionIndex, optionIndex) => {
+    //     const inputType = questions[questionIndex]?.type === 'multipleChoice' ? 'radio' : 'checkbox';
 
+    //     return (
+    //         <FormControlLabel
+    //             key={optionIndex}
+    //             control={<Checkbox />}
+    //             label={questions[questionIndex]?.options[optionIndex]}
+    //             onChange={() => handleAnswerChange(questionIndex, optionIndex)}
+    //         />
+    //     );
+    // };
+    // const renderInput = (questionIndex, optionIndex) => {
+    //     const type = questions[questionIndex]?.type;
+    //     const isSelected = questions[questionIndex]?.options[optionIndex] === questions[questionIndex]?.chosen_option;
+    
+    //     return (
+    //         <FormControlLabel
+    //             key={optionIndex}
+    //             control={
+    //                 type === 'multipleChoice' ? (
+    //                     <Radio
+    //                         checked={isSelected}
+    //                         onChange={() => handleAnswerChange(questionIndex, optionIndex)}
+    //                     />
+    //                 ) : (
+    //                     <Checkbox
+    //                         checked={isSelected}
+    //                         onChange={() => handleAnswerChange(questionIndex, optionIndex)}
+    //                     />
+    //                 )
+    //             }
+    //             label={questions[questionIndex]?.options[optionIndex]}
+    //         />
+    //     );
+    // };
+    const renderInput = (questionIndex, optionIndex) => {
+        const question = questions[questionIndex];
+        const type = question.type;
+        const selectedOption = question.options[optionIndex];
+        let isSelected = false;
+    
+        const foundAnswer = answers.find(ans => ans.question === question.question);
+    
+        if (foundAnswer) {
+            isSelected = type === 'multipleChoice'
+                ? foundAnswer.chosen_option === selectedOption
+                : foundAnswer.chosen_option.includes(selectedOption);
+        }
+    
         return (
             <FormControlLabel
                 key={optionIndex}
-                control={<Checkbox />}
-                label={questions[questionIndex]?.options[optionIndex]}
-                onChange={() => handleAnswerChange(questionIndex, optionIndex)}
+                control={
+                    type === 'multipleChoice' ? (
+                        <Radio
+                            checked={isSelected}
+                            onChange={() => handleAnswerChange(questionIndex, optionIndex)}
+                        />
+                    ) : (
+                        <Checkbox
+                            checked={isSelected}
+                            onChange={() => handleAnswerChange(questionIndex, optionIndex)}
+                        />
+                    )
+                }
+                label={selectedOption}
             />
         );
     };
-
+    
     if (finalSubmission?.flag) {
         return <QuizSubmit finalSubmission={finalSubmission} />;
     }
