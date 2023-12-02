@@ -41,8 +41,6 @@ function UserRegistration() {
 
     const handleRequestBodyChange = (event) => {
         const { name, value } = event.target;
-        console.log(name, '=name');
-        console.log(value, '=value')
         setRequestBody((prev) => ({
             ...prev,
             [name]: value,
@@ -53,39 +51,36 @@ function UserRegistration() {
         event.preventDefault();
 
         try {
-            // Update: we need to check in the request body if user is trying to register for courses which share same course code
-            // courses_list": [
-            //     {
-            //         "course_code": "501",
-            //         "teacher_id": "1"
-            //     },
-            //     {
-            //         "course_code": "501",
-            //         "teacher_id": "2"
-            //     }
-            // ]
-
             const { courses_list } = requestBody;
             // flag which checks if more than one course share same course code
+
+            // handling if the user has not registered for a course.
+            if (!courses_list || courses_list.length == 0) {
+                setuiError('Please register for a course before continuing!');
+                return setTimeout(() => {
+                    setuiError(false);
+                }, 4000)
+            }
+
             const isSameCourseCode = hasDuplicateCourseCode(courses_list);
+
+
 
             if (isSameCourseCode) {
                 setuiError('You cannot register for the same course twice!');
-                return setTimeout(()=>{
+                return setTimeout(() => {
                     setuiError(false);
-                },4000)
+                }, 4000)
             }
 
             const response = await axios.post(
                 `http://${process.env.REACT_APP_SERVER_HOST}:${process.env.REACT_APP_SERVER_PORT}/quiz/registration/`,
                 requestBody
             );
-            console.log(response);
             setData(response);
             // to do: 
 
             setRequestBody({ email_id: '', password: '', is_teacher: false, name: '' });
-            console.log(requestBody, '= new request body');
             setTimeout(() => {
                 setData(null);
             }, 2000)
@@ -105,7 +100,7 @@ function UserRegistration() {
                 <Grid container justifyContent="center">
                     <Grid item xs={12} md={8} lg={6}>
                         <Paper elevation={3} className={styles.form_container}>
-                            {data ? (<div className='alert alert-success'>Successfully Registred!</div>) : null}
+                            {data ? (<div className='alert alert-success'>Successfully Registered!</div>) : null}
                             {isError ? <div className='alert alert-danger'>{isError?.message}</div> : null}
                             {isUiError ? <div className='alert alert-danger'>{isUiError}</div> : null}
 

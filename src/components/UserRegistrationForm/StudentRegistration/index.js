@@ -15,10 +15,8 @@ function StudentRegistrationForm(props) {
             try {
                 setIsLoading(true);
                 const response = await axios.get(`http://${process.env.REACT_APP_SERVER_HOST}:${process.env.REACT_APP_SERVER_PORT}/quiz/courses/`);
-                console.log(response.data,'= response');
                 setData(response.data)
             } catch (err) {
-                console.log(err, '= error')
                 setError(true)
             } finally {
                 setIsLoading(false)
@@ -32,10 +30,6 @@ function StudentRegistrationForm(props) {
         const teacher_id = event.target.name;
         const course_code = event.target.value;
 
-        console.log(teacher_id,'= teacher id')
-        console.log(course_code,'= course id')
-
-
         if (event.target.checked) {
             if (!requestBody.courses_list) requestBody.courses_list = []
             // checking if the courses were already added by user
@@ -46,7 +40,6 @@ function StudentRegistrationForm(props) {
             }
             setRequestBody(requestBody)
             
-            console.log(requestBody)
         } else {
 
             if (!requestBody.courses_list) requestBody.courses_list = []
@@ -58,9 +51,6 @@ function StudentRegistrationForm(props) {
         }
 
     }
-
-    // logging the request body
-    console.log(requestBody,'= request body')
 
     // loader 
     if (isLoading) {
@@ -82,7 +72,6 @@ function StudentRegistrationForm(props) {
         }
         else {
             return data.map((e, index) => {
-                console.log(e, '=element');
                 return (
                     <div key={index}>
                         <input autoComplete="off" type="checkbox" name={e.teachers__teacher_id} value={e.course_code} onChange={handleSubjects} />

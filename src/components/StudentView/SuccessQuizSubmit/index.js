@@ -3,7 +3,6 @@ import { Container, Card } from 'react-bootstrap';
 
 function QuizSubmit(props) {
     const { finalSubmission } = props;
-    console.log(finalSubmission, '=final submission');
     const { data } = finalSubmission;
 
     const { percentage, final_score, correct_answers, total_questions, scores_info } = data;

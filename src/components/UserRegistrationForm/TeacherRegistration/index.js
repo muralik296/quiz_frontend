@@ -20,7 +20,6 @@ function TeacherRegistrationForm(props) {
             })
             return prev
         })
-        console.log(requestBody,'= change at teacher form');
         setNumberOfInputs((prev) => prev + 1);
     };
 

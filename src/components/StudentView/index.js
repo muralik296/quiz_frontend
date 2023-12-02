@@ -34,8 +34,12 @@ function checkEligibility(startTime, startDate, duration) {
 }
 
 const StudentView = () => {
-    const { data, setData, userInfo } = useContext(AccountContext);
 
+    console.log('Student view rendered now');
+
+
+    const { data, setData, userInfo } = useContext(AccountContext);
+    const [isNotDoneWithQuiz,setQuizState] = useState(true);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -67,12 +71,10 @@ const StudentView = () => {
     const [quizData, setQuizData] = useState(null);
 
     const { student_info, courses_info } = data;
-    console.log(student_info, '= student infor');
     const { student_id, name, email_id } = student_info;
 
     function renderShowQuizes(subject, index) {
         const { course_code, course_name, quizzes_info } = subject;
-        console.log(quizzes_info)
 
         if (quizzes_info.length == 0) {
             return (< Card key={index} className="mb-4" style={{ borderRadius: '15px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', margin: '10px' }}>
@@ -88,11 +90,10 @@ const StudentView = () => {
 
         const isEligible = checkEligibility(start_time, start_date, duration);
 
-        console.log(isEligible, '= is eligible to take the quiz');
 
         return (
 
-            < Card key={index} style={{ borderRadius: '15px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', margin: '10px' }} title={!isEligible ? 'You are not eligible to take the quiz at this time' : null}>
+            < Card key={index} style={{ borderRadius: '15px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', margin: '10px' }} title={!isEligible ? 'You cannot take the quiz at this time' : null}>
                 <Card.Body>
                     <Card.Title>{course_name}</Card.Title>
 
@@ -100,7 +101,7 @@ const StudentView = () => {
 
                     <Button
 
-                        //TO DO.  disabled={!isEligible ? true : false} 
+                        disabled={!isEligible ? true : false} 
                         onClick={(e) => handleQuiz(subject)} >
                         Take Quiz
                     </Button>
@@ -111,18 +112,13 @@ const StudentView = () => {
 
     async function handleQuiz(subject) {
         try {
-            console.log(subject);
             const { course_id, course_name, quizzes_info } = subject;
-            console.log(course_id)
-            console.log(course_name)
-            // console.log()
+       
             const { start_date, start_time, duration } = quizzes_info[0];
 
             const end_point = `http://${process.env.REACT_APP_SERVER_HOST}:${process.env.REACT_APP_SERVER_PORT}/quiz/student/${course_id}/questions`;
 
             const response = await axios.get(end_point)
-
-            console.log(response.data);
 
             setQuizData({ quizInfo: response.data, subject: subject });
 
@@ -137,8 +133,8 @@ const StudentView = () => {
         return time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     };
 
-    if (quizData) {
-        return <ShowQuiz quizData={quizData} student_id={student_id} />
+    if (quizData && isNotDoneWithQuiz) {
+        return <ShowQuiz quizData={quizData} student_id={student_id} setQuizState={setQuizState}/>
     }
 
     return (

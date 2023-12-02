@@ -40,9 +40,7 @@ const ManageQuiz = () => {
                 const end_point = `http://${process.env.REACT_APP_SERVER_HOST}:${process.env.REACT_APP_SERVER_PORT}/quiz/student/${course_id}/questions/`;
 
                 const response = await axios.get(end_point);
-                console.log(response.data, '= response');
                 const { questions } = response.data;
-                console.log(questions, '= questions');
                 setQuestions(questions);
             } catch (error) {
                 setError(error);
@@ -215,7 +213,6 @@ const ManageQuiz = () => {
                     },
                 }
             );
-            console.log(response.data, '=success call');
             setIsUpdated(true);
 
             setTimeout(() => {

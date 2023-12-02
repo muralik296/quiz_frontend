@@ -6,7 +6,6 @@ import { Navigate } from "react-router-dom";
 const ProtectedRoute = props => {
 
     const { isAuth } = useContext(AccountContext);
-    console.log(isAuth, '= is authenticated');
     return (isAuth ? (
         <Outlet />
     ) : <Navigate to="/login" />)

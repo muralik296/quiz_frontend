@@ -83,7 +83,6 @@ function TeacherView() {
       // Edit Quiz Component needs to be rendered
       return navigate('/manageQuiz', { state: { clickedCourse } });
     } else {
-      console.log('here at create');
       // Create quiz component will be rendered
       return navigate('/createQuiz', { state: { clickedCourse } });
     }

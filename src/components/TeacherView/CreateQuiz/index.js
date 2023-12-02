@@ -28,6 +28,7 @@ const CreateQuiz = () => {
 
     const navigate = useNavigate();
 
+    const minToday = new Date().toISOString().split("T")[0];
 
     // useLocation hook gives access to the current location (including state)
     const location = useLocation();
@@ -46,7 +47,6 @@ const CreateQuiz = () => {
 
     const { teacher_id } = teacher_info;
 
-    console.log(course_id, '=course')
 
     const [isCreated, setIsCreated] = useState(false);
     const [isError, setError] = useState({ isError: false })
@@ -54,7 +54,7 @@ const CreateQuiz = () => {
     const [startTime, setStartTime] = useState('');
     const [startDate, setStartDate] = useState('');
     const [duration, setDuration] = useState('');
-    const [numberOfQuestions, setNumberOfQuestions] = useState(0);
+    const [numberOfQuestions, setNumberOfQuestions] = useState(10);
     const [questions, setQuestions] = useState([]);
 
 
@@ -72,7 +72,6 @@ const CreateQuiz = () => {
             const options = Array.from({ length: numberOfChoices }, (_, i) => e.target[`option${index + 1}_${i + 1}`]?.value || '');
             let correctAnswer = e.target[`correctAnswer${index + 1}`]?.value || '';
 
-            console.log(correctAnswer);
 
             if (type == 'multipleAnswer') {
                 correctAnswer = correctAnswer.split(',').map(Number); // this will give array of indices where i need to locate the right answer
@@ -82,7 +81,6 @@ const CreateQuiz = () => {
                     answer.push(eachAnswer);
                 }
 
-                console.log(answer, '= answers to tht question')
 
                 quiz_content.push({
                     question,
@@ -95,7 +93,6 @@ const CreateQuiz = () => {
                 correctAnswer = correctAnswer.split("_")[1]; // this will give the indice where correct answer is located
                 const answer = options[Number(correctAnswer) - 1]
 
-                console.log([answer], '=answer to the question')
 
                 quiz_content.push({
                     question,
@@ -117,7 +114,6 @@ const CreateQuiz = () => {
             duration: `${duration}`
         };
 
-        console.log(quizData)
 
         try {
             const response = await axios.post(
@@ -129,7 +125,6 @@ const CreateQuiz = () => {
                     },
                 }
             );
-            console.log(response.data, '=success call');
             setIsCreated(true)
 
             setTimeout(() => {
@@ -238,18 +233,24 @@ const CreateQuiz = () => {
         setQuestions(updatedQuestions);
     };
 
+    const handleNumberOfQuestions = (num) => {
+        if (num <= 10) {
+            return setNumberOfQuestions(10);
+        }
+        return setNumberOfQuestions(num);
+    }
+
     return (
-        <Container className="mt-5 p-4" style={{ background: '#FFF7F0', borderRadius: '10px' }}>
+        <Container className="mt-5 p-4" style={{ background: '#fff', borderRadius: '10px' }}>
             <h2 className="mb-4">Create Quiz</h2>
-            {isCreated ? (<div className="alert alert-success" style={{ margin: '10px' }}>{`Quiz Created Successfully`}</div>) : null}
-            {isError.isError ? (<div className="alert alert-danger" style={{ margin: '10px' }}>{`Error : ${isError.message}`}</div>) : null}
+
             <Form onSubmit={handleQuizSubmit}>
 
                 <div className="row">
                     <div className='col-md-6'>
                         <Form.Group controlId="startDate">
                             <Form.Label>Start Date:</Form.Label>
-                            <Form.Control type="date" onChange={(e) => setStartDate(e.target.value)} required />
+                            <Form.Control type="date" min={minToday} onChange={(e) => setStartDate(e.target.value)} required />
                         </Form.Group>
 
                         <Form.Group controlId="startTime">
@@ -266,7 +267,7 @@ const CreateQuiz = () => {
                     <div className="col-md-6">
                         <Form.Group controlId="numberOfQuestions">
                             <Form.Label>Number of Questions:</Form.Label>
-                            <Form.Control type="number" min="1" defaultValue="0" onChange={(e) => setNumberOfQuestions(e.target.value)} required />
+                            <Form.Control type="number" min="10" defaultValue="10" onChange={(e) => handleNumberOfQuestions(e.target.value)} required />
                         </Form.Group>
 
                         {renderQuestionForm()}
@@ -276,7 +277,8 @@ const CreateQuiz = () => {
 
 
                     </div>
-
+                    {isCreated ? (<div className="alert alert-success" style={{ margin: '10px' }}>{`Quiz Created Successfully`}</div>) : null}
+                    {isError.isError ? (<div className="alert alert-danger" style={{ margin: '10px' }}>{`Error : ${isError.message}`}</div>) : null}
                 </div>
 
 

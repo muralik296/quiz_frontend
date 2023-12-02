@@ -12,7 +12,6 @@ function quizIconLink(isAuth, is_teacher) {
 
 function NavBar() {
     const { is_teacher, isAuth, setAuth, data, setData, userInfo } = useContext(AccountContext);
-    console.log(isAuth)
 
     function handleLogOut() {
         setAuth(false);

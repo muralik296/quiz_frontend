@@ -11,7 +11,6 @@ const ClassStatistics = () => {
     const location = useLocation();
 
     const { state } = location;
-    console.log(state, '= state');
 
     const { course_id } = state;
 
@@ -25,8 +24,6 @@ const ClassStatistics = () => {
 
                 const response = await axios.get(end_point);
 
-                console.log(response.data);
-
                 setStats(response.data);
             } catch (error) {
                 setError(error);
@@ -36,7 +33,7 @@ const ClassStatistics = () => {
     }, [course_id]);
 
     if (err) {
-        return <>Error: {err.message}</>;
+        return <div className='alert alert-danger'>No Stats to show at the moment</div>;
     }
 
     if (!stats) {
