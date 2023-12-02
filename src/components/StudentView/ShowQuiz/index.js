@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef,useEffect } from 'react';
 import { Card, CardContent, Typography, Grid, Button, Container, Checkbox, FormControlLabel } from '@mui/material';
 import axios from 'axios';
 import QuizSubmit from '../SuccessQuizSubmit';
@@ -9,15 +9,30 @@ const formatTime = (time) => (time < 10 ? `0${time}` : time);
 function ShowQuiz(props) {
     const { quizData, student_id } = props;
     const { quizInfo, subject } = quizData;
-
-    const [remainingTime, setRemainingTime] = useState(0);
-    const myForm = useRef(null);
-
-    console.log(remainingTime, '=remaining time');
     const [finalSubmission, setFinalSubmission] = useState(null);
     const { course_id, course_name, quizzes_info } = subject;
     const { start_date, start_time, duration } = quizzes_info[0];
     const { questions } = quizInfo;
+
+    const myForm = useRef(null);
+
+
+
+
+    const [remainingTime, setRemainingTime] = useState({
+        hours: Math.floor(duration / 60),
+        minutes: duration % 60,
+        seconds: 0,
+    });
+
+    console.log(remainingTime, '=remaining time');
+
+
+    useEffect(() => {
+        if (remainingTime.hours === 0 && remainingTime.minutes === 0 && remainingTime.seconds === 0) {
+            submitQuiz(); // Trigger quiz submission when time is up
+        }
+    }, [remainingTime]);
 
     const handleAnswerChange = (questionIndex, optionIndex) => {
         const questionName = questions[questionIndex]?.question;
@@ -52,6 +67,21 @@ function ShowQuiz(props) {
 
             return updatedAnswers;
         });
+    };
+
+ 
+
+    const submitQuiz = async () => {
+        try {
+            const requestBody = { answers: answers.flat() };
+            const endpoint = `http://${process.env.REACT_APP_SERVER_HOST}:${process.env.REACT_APP_SERVER_PORT}/quiz/student/${course_id}/${student_id}/answers/`;
+            const res = await axios.post(endpoint, requestBody);
+            console.log('Quiz submitted:', res.data);
+            setFinalSubmission({ data: res.data, flag: true });
+        } catch (err) {
+            setFinalSubmission({ flag: false, data: err });
+            console.log('Error submitting quiz:', err);
+        }
     };
 
     const handleSubmit = async (event) => {
@@ -108,7 +138,7 @@ function ShowQuiz(props) {
                     </Typography>
                 </Container>
 
-                <QuizTimer startTime={`${start_date} ${start_time}`} duration={duration} remainingTime={remainingTime} setRemainingTime={setRemainingTime} />
+                <QuizTimer startTime={`${start_date} ${start_time}`} duration={duration} remainingTime={remainingTime} setRemainingTime={setRemainingTime} courseId={course_id} studentId={student_id} quizdata={{ answers: answers.flat() }}/>
                 <Container>
                     {finalSubmission?.flag === false && (
                         <div style={{ marginTop: '1rem', marginBottom: '1rem' }} className='alert alert-danger'>
