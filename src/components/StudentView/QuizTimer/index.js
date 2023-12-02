@@ -4,35 +4,35 @@ import { Card } from 'react-bootstrap';
 
 const QuizTimer = ({ startTime, duration, remainingTime, setRemainingTime }) => {
 
+    const [intervalId, setIntervalId] = useState(null);
+    const calculateRemainingTime = () => {
+        const currentTime = new Date();
+        const endTime = new Date(new Date(startTime).getTime() + duration * 60 * 1000);
+        const timeDiff = endTime - currentTime;
+
+        if (timeDiff > 0) {
+            const hours = Math.floor(timeDiff / (1000 * 60 * 60));
+            const minutes = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((timeDiff % (1000 * 60)) / 1000);
+            setRemainingTime({ hours, minutes, seconds });
+        } else {
+            clearInterval(intervalId); // Stop the interval
+            setRemainingTime({ hours: 0, minutes: 0, seconds: 0 });
+        }
+    };
+
     useEffect(() => {
-        let intervalId;
-
-        const calculateRemainingTime = () => {
-            const currentTime = new Date();
-            const endTime = new Date(new Date(startTime).getTime() + parseInt(duration, 10) * 60 * 1000);
-            const timeDiff = endTime - currentTime;
-
-            if (timeDiff > 0) {
-                const hours = Math.floor(timeDiff / (1000 * 60 * 60));
-                const minutes = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60));
-                const seconds = Math.floor((timeDiff % (1000 * 60)) / 1000);
-                setRemainingTime({ hours, minutes, seconds });
-            } else {
-                setRemainingTime({ hours: 0, minutes: 0, seconds: 0 });
-                clearInterval(intervalId);
-            }
-        };
-
-        // Update remaining time initially
         calculateRemainingTime();
 
-        // Update remaining time every second
-        intervalId = setInterval(calculateRemainingTime, 1000);
+        const id = setInterval(calculateRemainingTime, 1000);
+        setIntervalId(id);
 
-        // Clear the interval when the component is unmounted
-        return () => clearInterval(intervalId);
+        return () => clearInterval(id);
     }, [startTime, duration]);
 
+   
+
+    
     const formatTime = (time) => (time < 10 ? `0${time}` : time);
 
     return (
