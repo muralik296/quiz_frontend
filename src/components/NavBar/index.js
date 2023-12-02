@@ -11,8 +11,13 @@ function quizIconLink(isAuth, is_teacher) {
 }
 
 function NavBar() {
-    const { is_teacher, isAuth, setAuth, data, setData } = useContext(AccountContext);
+    const { is_teacher, isAuth, setAuth, data, setData, userInfo } = useContext(AccountContext);
     console.log(isAuth)
+
+    function handleLogOut() {
+        setAuth(false);
+    }
+
     return (
         <AppBar position="static">
             <Toolbar>
@@ -21,13 +26,19 @@ function NavBar() {
                         <QuizIcon />
                     </Link>
                 </Typography>
-                {/* <Button color="inherit" component={Link} to="/about">
-                    About
-                </Button> */}
+
+                {
+                    (isAuth) ? (
+                        <Typography color="inherit">
+                            {is_teacher ? 'Teacher' : 'Student'} {userInfo.name} 
+                        </Typography>
+                    ) : null
+                }
+                
                 {isAuth ? (
                     <>
                         <Button color="inherit" component={Link} to={is_teacher ? "/teacherView" : "/studentView"}>
-                            Dashboard
+                            Home
                         </Button>
                     </>
                 ) : (
@@ -40,7 +51,13 @@ function NavBar() {
                         </Button>
                     </>
                 )}
-
+                {
+                    (isAuth) ? (
+                        <Button color="inherit" onClick={handleLogOut}>
+                            Log Out
+                        </Button>
+                    ) : null
+                }
             </Toolbar>
         </AppBar>
     );

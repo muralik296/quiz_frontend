@@ -2,9 +2,19 @@ import React, { useEffect, useState } from 'react';
 import 'chart.js/auto';
 import { Bar, Doughnut } from 'react-chartjs-2';
 import axios from 'axios';
-import { Card, CardContent, Typography, Grid } from '@mui/material';
+import { Card, CardContent, Typography, Grid, Container } from '@mui/material';
+import { useLocation } from 'react-router';
 
-const ClassStatistics = ({ course_id }) => {
+const ClassStatistics = () => {
+
+    // useLocation hook gives access to the current location (including state)
+    const location = useLocation();
+
+    const { state } = location;
+    console.log(state, '= state');
+
+    const { course_id } = state;
+
     const [stats, setStats] = useState(null);
     const [err, setError] = useState(false);
 
@@ -103,8 +113,10 @@ const ClassStatistics = ({ course_id }) => {
     };
 
     return (
-        <div>
-            <h2>Class Statistics</h2>
+        <div style={{ padding: '1rem' }}>
+            <Container>
+                Class Statistics
+            </Container>
 
             <Grid container spacing={3}>
                 {/* General Statistics Card */}

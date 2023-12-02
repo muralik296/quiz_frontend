@@ -2,10 +2,11 @@ import { useContext, useState, useEffect } from 'react';
 import { Form, Button, Container, Card } from 'react-bootstrap';
 import axios from 'axios';
 import { AccountContext } from '../../../Store/AccountContext';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 
 const ManageQuiz = () => {
+    const navigate = useNavigate();
 
     // account information from account context
     const { data, setData } = useContext(AccountContext);
@@ -219,6 +220,7 @@ const ManageQuiz = () => {
 
             setTimeout(() => {
                 setIsUpdated(false);
+                return navigate('/teacherView')
             }, 2000);
 
         } catch (err) {
@@ -242,7 +244,7 @@ const ManageQuiz = () => {
 
 
     return (
-        <Container className="mt-5 p-4" style={{ background: '#FFF7F0', borderRadius: '10px' }}>
+        <Container className="mt-5 p-4" style={{ background: '#fff', borderRadius: '10px' }}>
             <h2 className="mb-4">Update Quiz</h2>
 
             {isUpdated ? (<div className="alert alert-success">{`Quiz updated Successfully`}</div>) : null}

@@ -1,4 +1,4 @@
-import { useState, useContext } from 'react';
+import { useEffect, useState, useContext } from 'react';
 import { Button, Card, Row, Col } from 'react-bootstrap';
 import axios from 'axios';
 import ShowQuiz from './ShowQuiz';
@@ -34,7 +34,34 @@ function checkEligibility(startTime, startDate, duration) {
 }
 
 const StudentView = () => {
-    const { data, setData } = useContext(AccountContext);
+    const { data, setData, userInfo } = useContext(AccountContext);
+
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const end_point = `http://${process.env.REACT_APP_SERVER_HOST}:${process.env.REACT_APP_SERVER_PORT}/quiz/login/`;
+
+                const response = await axios.post(end_point,
+                    {
+                        email_id: userInfo.email_id,
+                        password: userInfo.password,
+                        is_teacher: false
+                    },
+                    {
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                    });
+
+                setData(response.data)
+            } catch (error) {
+                console.log(error);
+            }
+        };
+        fetchData();
+    }, [])
+
 
 
     const [quizData, setQuizData] = useState(null);
@@ -116,7 +143,7 @@ const StudentView = () => {
 
     return (
         <div className='container-fluid'>
-            <Header name={name} email_id={email_id} is_student={true} />
+            {/* <Header name={name} email_id={email_id} is_student={true} /> */}
             <Row className="mt-3">
                 {courses_info.map((subject, index) => {
 

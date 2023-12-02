@@ -19,7 +19,7 @@ import { Navigate } from "react-router-dom";
 
 
 const LoginComponent = () => {
-    const { setIsTeacher, isAuth, setAuth, data, setData } = useContext(AccountContext);
+    const { setIsTeacher, isAuth, setAuth, data, setData, setUserInfo } = useContext(AccountContext);
 
     const [formData, setFormData] = useState({
         email_id: '',
@@ -47,9 +47,33 @@ const LoginComponent = () => {
             );
 
             setData(response.data);
-            if (formData.is_teacher){
+            // i need to get email and name of the user logged in to put in the user info
+            if (formData.is_teacher) {
+
+                const { teacher_info } = response.data;
+                const { name, email_id } = teacher_info;
+                setUserInfo({
+                    name,
+                    email_id,
+                    password: formData.password
+                })
+
+            }
+            else {
+
+                const { student_info } = response.data;
+                const { name, email_id } = student_info;
+                setUserInfo({
+                    name,
+                    email_id,
+                    password: formData.password
+                })
+
+            }
+
+            if (formData.is_teacher) {
                 setIsTeacher(true)
-            }else{
+            } else {
                 setIsTeacher(false)
             }
             setAuth(true);

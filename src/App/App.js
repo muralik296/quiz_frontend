@@ -14,6 +14,7 @@ import TeacherView from '../components/TeacherView';
 import CreateQuiz from '../components/TeacherView/CreateQuiz';
 import ManageQuiz from '../components/TeacherView/ManageQuiz';
 import StudentView from '../components/StudentView';
+import ClassStatistics from '../components/TeacherView/Stats';
 
 function App() {
   return (
@@ -44,7 +45,7 @@ function App() {
 
             {/* TODO: StudentView routes */}
             <Route path="/studentView" element={<StudentView />} />
-
+            <Route path="/classStats" element={<ClassStatistics />} />
             <Route path='*' element={<NotFound />} />
 
           </Route>

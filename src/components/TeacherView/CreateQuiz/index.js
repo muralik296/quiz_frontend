@@ -4,7 +4,7 @@ import React, { useState, useContext } from 'react';
 import { Form, Button, Container, Card } from 'react-bootstrap';
 import axios from 'axios';
 import { AccountContext } from '../../../Store/AccountContext';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 
 // helper function to convert the time to AM-PM to send backend 
@@ -26,17 +26,20 @@ function convertTo12HourFormat(time24) {
 
 const CreateQuiz = () => {
 
+    const navigate = useNavigate();
+
+
     // useLocation hook gives access to the current location (including state)
     const location = useLocation();
 
     // Access the state from the location object
     const { state } = location;
-    
+
     // Access specific properties from the state
     const { quiz } = state || {};
     const { clickedCourse } = state;
     const { data, setData } = useContext(AccountContext);
-    
+
     const { course_code, course_id, course_name, quizzes_info } = clickedCourse;
 
     const { teacher_info, courses_info } = data;
@@ -131,7 +134,8 @@ const CreateQuiz = () => {
 
             setTimeout(() => {
                 setIsCreated(false);
-            }, 5000);
+                return navigate('/teacherView');
+            }, 2000);
 
         } catch (err) {
             setError({ isError: true, message: err?.response?.data?.message })
@@ -237,7 +241,8 @@ const CreateQuiz = () => {
     return (
         <Container className="mt-5 p-4" style={{ background: '#FFF7F0', borderRadius: '10px' }}>
             <h2 className="mb-4">Create Quiz</h2>
-
+            {isCreated ? (<div className="alert alert-success" style={{ margin: '10px' }}>{`Quiz Created Successfully`}</div>) : null}
+            {isError.isError ? (<div className="alert alert-danger" style={{ margin: '10px' }}>{`Error : ${isError.message}`}</div>) : null}
             <Form onSubmit={handleQuizSubmit}>
 
                 <div className="row">
@@ -271,8 +276,7 @@ const CreateQuiz = () => {
 
 
                     </div>
-                    {isCreated ? (<div className="alert alert-success" style={{ margin: '10px' }}>{`Quiz Created Successfully`}</div>) : null}
-                    {isError.isError ? (<div className="alert alert-danger" style={{ margin: '10px' }}>{`Error : ${isError.message}`}</div>) : null}
+
                 </div>
 
 
